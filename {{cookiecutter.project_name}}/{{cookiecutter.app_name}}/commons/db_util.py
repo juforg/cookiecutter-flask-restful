@@ -5,8 +5,7 @@ from pandas import DataFrame
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from wms import lazy_load_config
-from wms.extensions import db
+from {{cookiecutter.app_name}}.extensions import db
 from contextlib import contextmanager
 from pandas._libs.tslibs.timestamps import Timestamp
 import pandas as pd
@@ -99,7 +98,7 @@ def full_update(session, schema_type, data_dict_list, model_type, request_id: st
     start = time.time()
     count = session.query(model_type).filter_by(**kwargs).delete()
     logger.info("数据[%s]全量删除,request_id:[%s],kwargs:[%s]完成, 删除:%s,[performance-DD]耗时:[%s]", model_type.__tablename__, request_id, kwargs.__str__(), count, time.time() - start)
-    step = int(lazy_load_config.lazy_config.FULL_INSERT_STEP)
+    step = 1000
     ni = 0
     while data_dict_list:
         tmp_data = data_dict_list[ni * step:(ni + 1) * step]
@@ -126,7 +125,7 @@ def increment_update(session, schema_type, data_dict_list, is_src: bool, request
     """
     start = time.time()
     schema = schema_type(many=True, unknown=True)
-    step = int(lazy_load_config.lazy_config.INCREMENT_UPDATE_STEP)
+    step = 200
     ni = 0
     while data_dict_list:
         tmp_data = data_dict_list[ni * step:(ni + 1) * step]

@@ -8,6 +8,7 @@ from {{cookiecutter.app_name}}.commons.constants.return_code import ReturnCode
 from {{cookiecutter.app_name}}.models import User
 from {{cookiecutter.app_name}}.extensions import ma, db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
+import logging
 
 logger = logging.getLogger(__name__)
 
