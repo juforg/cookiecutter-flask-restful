@@ -1,6 +1,8 @@
 {
     "project_name": "restful_api",
     "app_name": "myapi",
+    "python_version": ["3.7"],
+    "tox_python_env": "py{{ cookiecutter.python_version|replace('.','') }}",
     "use_celery": ["no", "yes"],
     "use_excel": ["no", "yes"],
     "admin_user_username": "admin",
