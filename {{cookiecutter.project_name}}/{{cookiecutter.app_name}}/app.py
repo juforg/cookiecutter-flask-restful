@@ -5,7 +5,7 @@ from {{cookiecutter.app_name}}.extensions import db, jwt, migrate, apispec
 {%- if cookiecutter.use_celery == "yes"%}, celery{% endif%}
 {%- if cookiecutter.use_celery == "yes"%}
 from celery.schedules import crontab
-{% endif%}
+{%- endif %}
 {%- if cookiecutter.use_excel == "yes"%}import flask_excel{% endif%}
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ def init_logger():
         dict_conf["handlers"]["file"]["filename"] = log_path
         dict_conf["handlers"]["all_file_handler"]["filename"] = log_path2
     else:
-        dict_conf["handlers"]["file"]["filename"] = "./cas.log"
+        dict_conf["handlers"]["file"]["filename"] = "./{{cookiecutter.app_name}}.log"
         dict_conf["handlers"]["all_file_handler"]["filename"] = "./all.log"
     logging.config.dictConfig(dict_conf)
 
@@ -50,9 +50,9 @@ def configure_extensions(app, cli):
     """
     db.init_app(app)
     jwt.init_app(app)
-    { % - if cookiecutter.use_excel == "excel" %}
+{%- if cookiecutter.use_excel == "excel" %}
     flask_excel.init_excel(app)
-    { % - endif %}
+{%- endif %}
     if cli is True:
         migrate.init_app(app, db)
 

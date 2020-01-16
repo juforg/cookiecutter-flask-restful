@@ -227,8 +227,9 @@ class DictList(Resource):
         session.commit()
         return ReturnCode.OK, 200
 
-
 {%- if cookiecutter.use_excel == "yes" %}
+
+
 @dict_bp.route('/dicts/export', methods=['POST'])
 @jwt_required
 def export_excel():
@@ -239,6 +240,7 @@ def export_excel():
     return excel.make_response_from_query_sets(query_sets, column_names, file_type="xlsx",
                                                file_name='字典表', sheet_name='字典表', colnames=colnames)
 {%- endif %}
+
 
 @dict_bp.route('/dicts/list', methods=['POST'])
 @jwt_required
@@ -256,8 +258,9 @@ def export_list():
     data = {"data": schema.dump(query.all())}
     return dict(data, **ReturnCode.OK), 200
 
-
 {%- if cookiecutter.use_excel == "yes" %}
+
+
 @dict_bp.route('/dicts/import', methods=['POST'])
 @jwt_required
 def import_excel():
@@ -278,6 +281,8 @@ def import_excel():
         ret = {"data", e.args}
         return dict(ret, **ReturnCode.UNKNOWN_ERROR)
     return ReturnCode.OK, 200
+
+
 {%- endif %}
 
 
