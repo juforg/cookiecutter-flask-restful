@@ -52,7 +52,7 @@ def configure_extensions(app, cli):
     """
     db.init_app(app)
     jwt.init_app(app)
-{%- if cookiecutter.use_excel == "excel" %}
+{%- if cookiecutter.use_excel == "yes" %}
     flask_excel.init_excel(app)
 {%- endif %}
     if cli is True:
