@@ -1,0 +1,11 @@
+pytest
+requests
+pytest_factoryboy
+openpyxl
+paramiko
+retry
+pysftp
+pick
+threadpool==1.3.2
+fabric2
+pyarmor==5.5.6

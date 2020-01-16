@@ -6,7 +6,7 @@
 # for celery: docker run --env-file=.flaskenv image celery worker -A myapi.celery_app:app
 #
 # note that celery will require a running broker and result backend
-FROM python:{{ cookiecutter.python_version }}
+FROM python:3.7.4-slim-stretch
 
 RUN mkdir /code
 WORKDIR /code

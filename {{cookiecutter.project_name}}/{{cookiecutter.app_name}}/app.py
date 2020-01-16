@@ -1,13 +1,20 @@
-from flask import Flask
-
+from flask import Flask, request, session
+import logging, logging.config, yaml, os, time
 from {{cookiecutter.app_name}} import auth, api
 from {{cookiecutter.app_name}}.extensions import db, jwt, migrate, apispec
 {%- if cookiecutter.use_celery == "yes"%}, celery{% endif%}
+{%- if cookiecutter.use_celery == "yes"%}
+from celery.schedules import crontab
+{% endif%}
+{%- if cookiecutter.use_excel == "yes"%}import flask_excel{% endif%}
+
+logger = logging.getLogger(__name__)
 
 
 def create_app(testing=False, cli=False):
     """Application factory, used to create application
     """
+    init_logger()
     app = Flask('{{cookiecutter.app_name}}')
     app.config.from_object('{{cookiecutter.app_name}}.config')
 
@@ -24,12 +31,28 @@ def create_app(testing=False, cli=False):
     return app
 
 
+def init_logger():
+    with open('logging.yml', 'r') as f_conf:
+        dict_conf = yaml.load(f_conf, Loader=yaml.FullLoader)
+    log_path = os.getenv("LOG_PATH")
+    if log_path:
+        log_path2 = log_path.replace('{{cookiecutter.app_name}}.log', 'all.log')
+        dict_conf["handlers"]["file"]["filename"] = log_path
+        dict_conf["handlers"]["all_file_handler"]["filename"] = log_path2
+    else:
+        dict_conf["handlers"]["file"]["filename"] = "./cas.log"
+        dict_conf["handlers"]["all_file_handler"]["filename"] = "./all.log"
+    logging.config.dictConfig(dict_conf)
+
+
 def configure_extensions(app, cli):
     """configure flask extensions
     """
     db.init_app(app)
     jwt.init_app(app)
-
+    { % - if cookiecutter.use_excel == "excel" %}
+    flask_excel.init_excel(app)
+    { % - endif %}
     if cli is True:
         migrate.init_app(app, db)
 
@@ -57,7 +80,10 @@ def register_blueprints(app):
     """register all blueprints for application
     """
     app.register_blueprint(auth.views.blueprint)
-    app.register_blueprint(api.views.blueprint)
+    app.register_blueprint(api.error_handler.err_bp)
+    app.register_blueprint(api.views.api_bp)
+    app.register_blueprint(api.resources.user.user_bp)
+    app.register_blueprint(api.resources.dict.dict_bp)
 {%- if cookiecutter.use_celery == "yes" %}
 
 
@@ -65,6 +91,12 @@ def init_celery(app=None):
     app = app or create_app()
     celery.conf.broker_url = app.config['CELERY_BROKER_URL']
     celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']
+    # celery.conf.CELERYBEAT_SCHEDULE = {
+    #     'prepare_data_task': {
+    #         'task': '{{cookiecutter.app_name}}.tasks.example.dummy_task',
+    #         'schedule': crontab(minute=10, hour=2)
+    #     }
+    # }
     celery.conf.update(app.config)
 
     class ContextTask(celery.Task):
@@ -76,3 +108,16 @@ def init_celery(app=None):
     celery.Task = ContextTask
     return celery
 {%- endif %}
+
+
+def init_around_request(app):
+    @app.before_request
+    def before_request():
+        session['req_start_time'] = time.time()
+        pass
+
+    @app.after_request
+    def after_request(response):
+        logger.info("[performance]接口请求:, %s, 耗时:, %s", request.url, time.time() - session['req_start_time'])
+        return response
+        pass

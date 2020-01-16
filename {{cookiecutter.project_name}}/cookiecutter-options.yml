@@ -6,4 +6,5 @@ default_context:
     admin_user_email: "{{ cookiecutter.admin_user_email }}"
     admin_user_password: "{{ cookiecutter.admin_user_password }}"
     use_celery: "{{ cookiecutter.use_celery }}"
+    use_excel: "{{ cookiecutter.use_excel }}"
     wsgi_server: "{{ cookiecutter.wsgi_server }}"

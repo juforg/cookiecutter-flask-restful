@@ -1,0 +1,47 @@
+version: 1
+disable_existing_loggers: false
+
+objects:
+  queue:
+    class: queue.Queue
+    maxsize: 1000
+formatters:
+  standard:
+    format: '%(asctime)s - %(levelname)s %(process)d %(name)s.%(funcName)s(): %(message)s'
+  error:
+    format: "%(asctime)s %(levelname)s <PID %(process)d:%(processName)s> %(name)s.%(funcName)s(): %(message)s"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: standard
+    stream: ext://sys.stdout
+  info_file_handler:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: standard
+    filename: $LOG_PATH/info.log
+    encoding: utf8
+  all_file_handler:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: standard
+    filename: $LOG_PATH/all.log
+    encoding: utf8
+  buffer_handler:
+    class: logging.handlers.MemoryHandler
+    capacity: 020
+    flushLevel: 30
+    formatter: standard
+    target: info_file_handler
+  queue_listener_handler:
+    class: wms.plugin.QueueListenerHandler
+    handlers:
+      - cfg://handlers.all_file_handler
+    queue: cfg://objects.queue
+
+root:
+  level: DEBUG
+  handlers: [console, buffer_handler, queue_listener_handler]
+  propogate: no
