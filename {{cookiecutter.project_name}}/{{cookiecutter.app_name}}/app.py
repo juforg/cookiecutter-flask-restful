@@ -6,7 +6,9 @@ from {{cookiecutter.app_name}}.extensions import db, jwt, migrate, apispec
 {%- if cookiecutter.use_celery == "yes"%}
 from celery.schedules import crontab
 {%- endif %}
-{%- if cookiecutter.use_excel == "yes"%}import flask_excel{% endif%}
+{%- if cookiecutter.use_excel == "yes"%}
+import flask_excel
+{%-  endif %}
 
 logger = logging.getLogger(__name__)
 
