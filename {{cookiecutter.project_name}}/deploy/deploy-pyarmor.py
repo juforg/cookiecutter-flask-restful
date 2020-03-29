@@ -277,9 +277,9 @@ if __name__ == '__main__':
         config_base_path = server_config['config_base_path']
         print('config_full_base_path==>' + get_config_full_base_path(config_base_path))
         print('nginx_config_full_base_path==>' + get_nginx_config_full_base_path(config_base_path))
-        algo_src_path = os.path.abspath(os.path.join(os.getcwd(), "../../", 'scheduling_algo/model'))
+        algo_src_path = os.path.abspath(os.path.join(os.getcwd(), "../../", '{{cookiecutter.app_name}}_algo/model'))
         be_server_src_path = os.path.abspath(os.path.join(os.getcwd(), '../'))
-        fe_src_path = os.path.abspath(os.path.join(os.getcwd(), "../../../", '{{cookiecutter.app_name}}-shift-scheduling-fe'))
+        fe_src_path = os.path.abspath(os.path.join(os.getcwd(), "../../../", '{{cookiecutter.app_name}}-fe'))
         algo_exclude_path = os.path.abspath(os.path.join(algo_src_path, 'demo'))
         dist_path = os.path.join(os.getcwd(), 'dist')
         clean_all()

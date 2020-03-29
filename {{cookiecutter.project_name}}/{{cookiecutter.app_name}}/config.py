@@ -31,7 +31,7 @@ CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND_URL")
 CELERY_TIMEZONE = 'Asia/Shanghai'
 CELERYD_FORCE_EXECV = True  # 非常重要,有些情况下可以防止死锁
 # CELERY_IGNORE_RESULT = True
-CELERY_TASK_SERIALIZER = 'pickle'  # 任务序列化肯反序列化使用pickle方案
+CELERY_TASK_SERIALIZER = 'pickle'  # 任务序列化和反序列化使用pickle方案
 CELERY_RESULT_SERIALIZER = 'json'  # 读取任务结果一般性能要求不高，所以使用可读性更好的json
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'pickle']  # 指定接收的内容类型
 CELERY_TASK_RESULT_EXPIRES = 60 * 10  # 任务结果过期时间
@@ -41,11 +41,15 @@ CELERYD_HIJACK_ROOT_LOGGER = False  # ：默认true，先前所有的logger的�
 CELERYD_TASK_LOG_FORMAT = "%(asctime)s %(levelname)s <PID %(process)d:%(processName)s> %(name)s.%(funcName)s(): %(message)s"
 CELERYD_LOG_FORMAT = "%(asctime)s %(levelname)s <PID %(process)d:%(processName)s> %(name)s.%(funcName)s(): %(message)s"
 # CELERYD_LOG_FORMAT = "[%(asctime)s: %(levelname)s/%(processName)s [%(task_name)s(%(task_id)s)] %(message)s"
-broker_transport_options = {
+CELERY_TASK_ACKS_LATE = False
+CELERY_REJECT_ON_WORKER_LOST = True
+# CELERYD_REDIRECT_STDOUTS_LEVEL = 'DEBUG'
+CELERY_TRACK_STARTED = True
+BROKER_TRANSPORT_OPTIONS = {
     'max_connections': 30,
     'health_check_interval': 20
 }
-result_backend_transport_options = {
+CELERY_RESULT_BACKEND_TRANSPORT_OPTIONS = {
     'visibility_timeout': 60 * 30,
     'health_check_interval': 20
 }
@@ -62,3 +66,5 @@ validate.Length.message_min = "字段长度不允许小于最小长度 {min}"
 validate.Length.message_max = "字段长度不允许超过最大长度{max}"
 validate.Length.message_all = "字段长度必须大于 {min} 小于 {max}"
 validate.Length.message_equal = "字段长度必须为 {equal}"
+validate.Range.message_min = "必须 {min_op} {{min}}."
+validate.Range.message_gte = "大于等于"

@@ -1,4 +1,3 @@
-marshmallow
 flask
 flask-restful
 flask-migrate
@@ -9,8 +8,11 @@ flask-jwt-extended
 Flask-Excel==0.0.7
 pyexcel-xlsx==0.5.7
 {%- endif %}
+{%- if cookiecutter.use_redis == "yes" %}
+flask-redis
+{%- endif %}
 marshmallow-sqlalchemy
-marshmallow==3.0.5
+marshmallow
 python-dotenv
 passlib
 apispec[yaml]

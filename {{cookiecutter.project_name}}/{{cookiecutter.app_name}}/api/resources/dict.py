@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import text
 
 from {{cookiecutter.app_name}}.commons import db_util
-from {{cookiecutter.app_name}}.commons.constants.return_code import ReturnCode
+from {{cookiecutter.app_name}}.commons.constants import return_code
 from {{cookiecutter.app_name}}.models import Dict, DictItem
 from {{cookiecutter.app_name}}.extensions import ma, db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
@@ -130,10 +130,9 @@ class DictResource(Resource):
         schema = DictDbSchema()
         dict = Dict.query.get(id)
         if dict:
-            ret = {"data": schema.dump(dict.__dict__)}
-            return dict(ret, **ReturnCode.OK), 200
+            return return_code.SUCCESS.data(schema.dump(dict.__dict__)), 200
         else:
-            return ReturnCode.NOT_FOUND, 200
+            return return_code.NOT_FOUND, 200
 
     def put(self, id):
         session = db.session
@@ -143,7 +142,7 @@ class DictResource(Resource):
         dict.updated_by = get_jwt_identity()
         session.merge(dict)
         session.commit()
-        return ReturnCode.OK, 200
+        return return_code.SUCCESS, 200
 
     def delete(self, id):
         dict = Dict.query.get(id)
@@ -151,8 +150,8 @@ class DictResource(Resource):
             db.session.delete(dict)
             db.session.commit()
         else:
-            return ReturnCode.NOT_FOUND, 200
-        return ReturnCode.OK, 200
+            return return_code.NOT_FOUND, 200
+        return return_code.SUCCESS, 200
 
 
 class DictList(Resource):
@@ -211,21 +210,20 @@ class DictList(Resource):
             query = query.filter_by(is_valid=is_valid)
         if sort:
             query = query.order_by(text(sort))
-        data = {"data": paginate(query, schema)}
-        return dict(data, **ReturnCode.OK), 200
+        return return_code.SUCCESS.data(paginate(query, schema)), 200
 
     def post(self):
         session = db.session
         dictCode = request.json.get("dictCode")
         dict = session.query(Dict).filter_by(dict_code=dictCode).first()
         if dict:
-            return ReturnCode.ALREADY_EXIST, 200
+            return return_code.ALREADY_EXIST, 200
         schema = DictDbSchema(unknown=True, partial=True)
         dict2 = schema.load(request.json)
         dict2.updated_by = get_jwt_identity()
         session.add(dict2)
         session.commit()
-        return ReturnCode.OK, 200
+        return return_code.SUCCESS, 200
 
 {%- if cookiecutter.use_excel == "yes" %}
 
@@ -255,8 +253,7 @@ def export_list():
     if date_type:
         query = query.filter_by(date_type=date_type)
     schema = DictSchema(many=True)
-    data = {"data": schema.dump(query.all())}
-    return dict(data, **ReturnCode.OK), 200
+    return return_code.SUCCESS.data(schema.dump(query.all())), 200
 
 {%- if cookiecutter.use_excel == "yes" %}
 
@@ -278,9 +275,8 @@ def import_excel():
         session.commit()
     except BaseException as e:
         logger.exception(e)
-        ret = {"data", e.args}
-        return dict(ret, **ReturnCode.UNKNOWN_ERROR)
-    return ReturnCode.OK, 200
+        return return_code.UNKNOWN_ERROR.data(e.args)
+    return return_code.SUCCESS, 200
 
 
 {%- endif %}
@@ -293,10 +289,9 @@ class DictItemResource(Resource):
         schema = DictItemDbSchema()
         dict_item = DictItem.query.get(id)
         if dict_item:
-            ret = {"data": schema.dump(dict_item.__dict__)}
-            return dict(ret, **ReturnCode.OK), 200
+            return return_code.SUCCESS.data(schema.dump(dict_item.__dict__)), 200
         else:
-            return ReturnCode.NOT_FOUND, 200
+            return return_code.NOT_FOUND, 200
 
     def put(self, id):
         session = db.session
@@ -306,7 +301,7 @@ class DictItemResource(Resource):
         dict_item.updated_by = get_jwt_identity()
         session.merge(dict_item)
         session.commit()
-        return ReturnCode.OK, 200
+        return return_code.SUCCESS, 200
 
     def delete(self, id):
         dict_item = DictItem.query.filter_by(id=id).first()
@@ -314,8 +309,8 @@ class DictItemResource(Resource):
             db.session.delete(dict_item)
             db.session.commit()
         else:
-            return ReturnCode.NOT_FOUND, 200
-        return ReturnCode.OK, 200
+            return return_code.NOT_FOUND, 200
+        return return_code.SUCCESS, 200
 
 
 class DictItemList(Resource):
@@ -328,8 +323,7 @@ class DictItemList(Resource):
         if is_valid:
             dict_item_query = dict_item_query.filter_by(is_valid=is_valid)
         query = dict_item_query.all()
-        data = {"data": schema.dump(query)}
-        return dict(data, **ReturnCode.OK), 200
+        return return_code.SUCCESS.data(schema.dump(query)), 200
 
     def post(self, dict_code):
         session = db.session
@@ -344,4 +338,4 @@ class DictItemList(Resource):
             data = schema.load(dict_items)
             session.bulk_save_objects(data)
         session.commit()
-        return ReturnCode.OK, 200
+        return return_code.SUCCESS, 200

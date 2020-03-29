@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class DbUtil:
     session = None
 
-    def get_session(self, bind='flux_wms'):
+    def get_session(self, bind='{{cookiecutter.app_name}}'):
         """
         使用了scoped_session 默认情况下，创建的session都是Thread-Local Scope
         :param bind:
@@ -30,7 +30,7 @@ class DbUtil:
         return self.session
 
     @contextmanager
-    def auto_commit(self, bind='flux_wms'):
+    def auto_commit(self, bind='{{cookiecutter.app_name}}'):
 
         try:
             self.session = self.get_session(bind=bind)

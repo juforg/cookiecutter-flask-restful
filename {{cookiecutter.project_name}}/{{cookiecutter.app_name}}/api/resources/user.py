@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_current_user, get_jwt_identity
 
 from {{cookiecutter.app_name}}.commons import db_util, common_fun
 from {{cookiecutter.app_name}}.commons.constants import const
-from {{cookiecutter.app_name}}.commons.constants.return_code import ReturnCode
+from {{cookiecutter.app_name}}.commons.constants import return_code
 from {{cookiecutter.app_name}}.models import User
 from {{cookiecutter.app_name}}.extensions import ma, db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
@@ -101,9 +101,9 @@ class UserResource(Resource):
         user = User.query.get(user_id)
         if user:
             ret = {"data": schema.dump(user.__dict__)}
-            return dict(ret, **ReturnCode.OK), 200
+            return  return_code.SUCCESS.data(schema.dump(user.__dict__)), 200
         else:
-            return ReturnCode.NOT_FOUND, 200
+            return return_code.NOT_FOUND, 200
 
     def put(self, user_id):
         session = db.session
@@ -112,7 +112,7 @@ class UserResource(Resource):
         user = schema.load(request.json)
         session.merge(user)
         session.commit()
-        return ReturnCode.OK, 200
+        return return_code.SUCCESS, 200
 
     def delete(self, user_id):
         user = User.query.get(user_id)
@@ -120,8 +120,8 @@ class UserResource(Resource):
             db.session.delete(user)
             db.session.commit()
         else:
-            return ReturnCode.NOT_FOUND, 200
-        return ReturnCode.OK, 200
+            return return_code.NOT_FOUND, 200
+        return return_code.SUCCESS, 200
 
 
 class UserList(Resource):
@@ -170,14 +170,14 @@ class UserList(Resource):
         schema = UserSchema(many=True)
         query = User.query
         data = {"data": paginate(query, schema)}
-        return dict(data, **ReturnCode.OK), 200
+        return return_code.SUCCESS.data(paginate(query, schema)), 200
 
     def post(self):
         schema = UserSchema(unknown=True)
         user = schema.load(request.json)
         db.session.add(user)
         db.session.commit()
-        return ReturnCode.OK, 200
+        return return_code.SUCCESS, 200
 
 
 class UserInfo(Resource):
@@ -190,10 +190,9 @@ class UserInfo(Resource):
         # user.roles = [user.roles]
         schema = UserSchema(unknown=True)
         if user:
-            ret = {"data": schema.dump(user.__dict__)}
-            return dict(ret, **ReturnCode.OK), 200
+            return return_code.SUCCESS.data(schema.dump(user.__dict__)), 200
         else:
-            return ReturnCode.USER_NOT_FOUND, 200
+            return return_code.USER_NOT_FOUND, 200
 
 
 @user_bp.route('/users/list', methods=['POST'])
@@ -205,8 +204,7 @@ def export_list():
     is_or_not_map = common_fun.get_dict_map(const.IS_OR_NOT_DICT_KEY)
     for r in datas:
         r.is_caiyin = is_or_not_map.get(str(r.is_caiyin), r.is_caiyin)
-    data = {"data": schema.dump(datas)}
-    return dict(data, **ReturnCode.OK), 200
+    return return_code.SUCCESS.data(schema.dump(datas)), 200
 
 
 {%- if cookiecutter.use_excel == "yes" %}
@@ -225,5 +223,5 @@ def import_excel():
                              is_src=True,
                              request_id=get_jwt_identity())
     session.commit()
-    return ReturnCode.OK, 200
+    return return_code.SUCCESS, 200
 {%- endif %}

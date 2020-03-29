@@ -1,7 +1,7 @@
 FLASK_ENV=production
 FLASK_APP=cws.app:create_app
 FLASK_RUN_PORT=5000
-SECRET_KEY=shanshucasio
+SECRET_KEY=ss{{cookiecutter.app_name}}
 DATABASE_URI=mysql+pymysql://root:123456@127.0.0.1:3306/{{cookiecutter.app_name}}
 SQLALCHEMY_ECHO=False
 CELERY_BROKER_URL=redis://:123456@localhost/1

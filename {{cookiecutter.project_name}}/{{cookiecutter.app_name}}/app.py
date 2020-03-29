@@ -22,14 +22,17 @@ def create_app(testing=False, cli=False):
 
     if testing is True:
         app.config['TESTING'] = True
-
+    app.config['JSON_AS_ASCII'] = False
     configure_extensions(app, cli)
     configure_apispec(app)
     register_blueprints(app)
+    init_around_request(app)
 {%- if cookiecutter.use_celery == "yes" %}
     init_celery(app)
 {%- endif %}
-
+{%- if cookiecutter.use_celery == "yes" %}
+    redis_client.init_app(app=app)
+{%- endif %}
     return app
 
 

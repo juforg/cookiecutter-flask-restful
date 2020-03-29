@@ -1,0 +1,12 @@
+/opt/{{cookiecutter.app_name}}/*/all.log{
+    rotate 5
+    daily
+    compress
+    delaycompress
+    missingok
+    ifempty
+    nocopytruncate
+    noolddir
+    dateext
+    create 777 root_admin root_admin
+}

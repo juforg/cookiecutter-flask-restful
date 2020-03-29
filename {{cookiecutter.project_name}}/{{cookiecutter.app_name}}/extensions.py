@@ -24,3 +24,6 @@ pwd_context = CryptContext(schemes=['pbkdf2_sha256'], deprecated='auto')
 {%- if cookiecutter.use_celery == "yes" %}
 celery = Celery()
 {%- endif %}
+{%- if cookiecutter.use_redis == "yes" %}
+redis_client = FlaskRedis()
+{%- endif %}

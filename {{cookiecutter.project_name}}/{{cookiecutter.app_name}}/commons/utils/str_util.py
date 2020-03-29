@@ -22,10 +22,12 @@ def is_number(str_number: str):
         return False
 
 def is_int(str_number: str):
-    if str_number.isdigit() or (str_number.split('-')[-1]).isdigit():
-        return True
-    else:
-        return False
+    """
+    判断字符串是否是整数 如果是正数 判断是否为数字 如果是负数 判断除掉负号的部分是否是数字
+    :param str_number:
+    :return:
+    """
+    return str_number.lstrip('-').isdigit()
 
 def is_float(str_number: str):
     """

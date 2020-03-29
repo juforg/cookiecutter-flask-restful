@@ -1,4 +1,4 @@
-.flaskenv
-/.pyarmor_config
-sql
-/cws.egg-info/
+../.flaskenv
+Dockerfile
+Makefile
+docker-compose.yml

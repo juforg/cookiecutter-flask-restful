@@ -2,7 +2,6 @@
 # @author: songjie
 # @email: songjie@shanshu.ai
 # @date: 2019/12/27
-
 from logging.config import ConvertingList, ConvertingDict, valid_ident
 from logging.handlers import QueueHandler, QueueListener
 from queue import Queue
