@@ -11,6 +11,9 @@ from flask_migrate import Migrate
 {%- if cookiecutter.use_celery == "yes" %}
 from celery import Celery
 {%- endif %}
+{%- if cookiecutter.use_redis == "yes" %}
+from flask_redis import FlaskRedis
+{%- endif %}
 
 from {{cookiecutter.app_name}}.commons.apispec import APISpecExt
 

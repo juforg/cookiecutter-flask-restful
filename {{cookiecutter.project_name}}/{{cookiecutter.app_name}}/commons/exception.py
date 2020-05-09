@@ -39,6 +39,16 @@ class C(Exception):
         return res
 
     @property
+    def n(self):
+        """
+        如果不需要格式化的错误码，可以通过f函数，或本属性，否则日志对象会一直存在内存里
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        return copy.copy(self)
+
+    @property
     def code(self):
         return self.__code
 
@@ -46,15 +56,17 @@ class C(Exception):
     def msg(self):
         return self.__msg
 
-    @__data.setter
-    def data(self, value):
+    def set_data(self, value):
         res = copy.copy(self)
         res.__data = value
         return res
 
     @property
+    def d(self):
+        return self.dict()
+
     def dict(self):
-        if self.__data:
+        if hasattr(self, "__data"):
             return {"code": self.__code, "msg": self.__msg, "data": self.__data}
         else:
             return {"code": self.__code, "msg": self.__msg}

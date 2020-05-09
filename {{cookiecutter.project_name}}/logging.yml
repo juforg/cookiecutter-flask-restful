@@ -32,13 +32,13 @@ handlers:
 loggers:
   {{cookiecutter.app_name}}:
     level: DEBUG
-    handlers: [queue_listener_handler]
+    handlers: [console,queue_listener_handler]
     propogate: no
   alg:
     level: DEBUG
-    handlers: [queue_listener_handler]
+    handlers: [console,queue_listener_handler]
     propogate: no
 root:
     level: DEBUG
-    handlers: [queue_listener_handler]
+    handlers: [console,queue_listener_handler]
     propogate: no

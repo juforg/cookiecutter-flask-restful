@@ -9,8 +9,8 @@ usage：
 """
 
 
-SUCCESS = C(2000, "成功")
-NO_RESULT = C(2001, "未生成任务")
+SUCCESS = C(200000, "成功")
+NO_RESULT = C(200001, "未生成任务")
 
 # 权限类
 # LOGIN_EXPIRED = C(300001, "登录过期")
@@ -29,8 +29,8 @@ NAME_PWD_INVALID = C(4000008, "用户名或密码错误")
 NOT_FOUND = C(4000009, "资源为找到")
 ALREADY_EXIST = C(4000010, "资源已存在")
 # 技术类
-UNKNOWN_ERROR = C(5000, "未知异常")
-SQL_ERROR = C(5100, "数据库异常")
+UNKNOWN_ERROR = C(500000, "未知异常")
+SQL_ERROR = C(510000, "数据库异常")
 
 # 业务类
 # # 警告类⚠️

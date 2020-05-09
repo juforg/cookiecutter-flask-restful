@@ -3,6 +3,7 @@ import logging, logging.config, yaml, os, time
 from {{cookiecutter.app_name}} import auth, api
 from {{cookiecutter.app_name}}.extensions import db, jwt, migrate, apispec
 {%- if cookiecutter.use_celery == "yes"%}, celery{% endif%}
+{%- if cookiecutter.use_redis == "yes"%}, redis_client{% endif%}
 {%- if cookiecutter.use_celery == "yes"%}
 from celery.schedules import crontab
 {%- endif %}
@@ -42,10 +43,8 @@ def init_logger():
     log_path = os.getenv("LOG_PATH")
     if log_path:
         log_path2 = log_path.replace('{{cookiecutter.app_name}}.log', 'all.log')
-        dict_conf["handlers"]["file"]["filename"] = log_path
         dict_conf["handlers"]["all_file_handler"]["filename"] = log_path2
     else:
-        dict_conf["handlers"]["file"]["filename"] = "./{{cookiecutter.app_name}}.log"
         dict_conf["handlers"]["all_file_handler"]["filename"] = "./all.log"
     logging.config.dictConfig(dict_conf)
 
@@ -87,8 +86,8 @@ def register_blueprints(app):
     app.register_blueprint(auth.views.blueprint)
     app.register_blueprint(api.error_handler.err_bp)
     app.register_blueprint(api.views.api_bp)
-    app.register_blueprint(api.resources.user.user_bp)
-    app.register_blueprint(api.resources.dict.dict_bp)
+    app.register_blueprint(api.resources.user_bp)
+    app.register_blueprint(api.resources.dict_bp)
 {%- if cookiecutter.use_celery == "yes" %}
 
 

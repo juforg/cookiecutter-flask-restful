@@ -130,9 +130,9 @@ class DictResource(Resource):
         schema = DictDbSchema()
         dict = Dict.query.get(id)
         if dict:
-            return return_code.SUCCESS.data(schema.dump(dict.__dict__)), 200
+            return return_code.SUCCESS.data(schema.dump(dict.__dict__)).d, 200
         else:
-            return return_code.NOT_FOUND, 200
+            return return_code.NOT_FOUND.d, 200
 
     def put(self, id):
         session = db.session
@@ -142,7 +142,7 @@ class DictResource(Resource):
         dict.updated_by = get_jwt_identity()
         session.merge(dict)
         session.commit()
-        return return_code.SUCCESS, 200
+        return return_code.SUCCESS.d, 200
 
     def delete(self, id):
         dict = Dict.query.get(id)
@@ -150,8 +150,8 @@ class DictResource(Resource):
             db.session.delete(dict)
             db.session.commit()
         else:
-            return return_code.NOT_FOUND, 200
-        return return_code.SUCCESS, 200
+            return return_code.NOT_FOUND.d, 200
+        return return_code.SUCCESS.d, 200
 
 
 class DictList(Resource):
@@ -223,7 +223,7 @@ class DictList(Resource):
         dict2.updated_by = get_jwt_identity()
         session.add(dict2)
         session.commit()
-        return return_code.SUCCESS, 200
+        return return_code.SUCCESS.d, 200
 
 {%- if cookiecutter.use_excel == "yes" %}
 
@@ -276,7 +276,7 @@ def import_excel():
     except BaseException as e:
         logger.exception(e)
         return return_code.UNKNOWN_ERROR.data(e.args)
-    return return_code.SUCCESS, 200
+    return return_code.SUCCESS.d, 200
 
 
 {%- endif %}
@@ -301,7 +301,7 @@ class DictItemResource(Resource):
         dict_item.updated_by = get_jwt_identity()
         session.merge(dict_item)
         session.commit()
-        return return_code.SUCCESS, 200
+        return return_code.SUCCESS.d, 200
 
     def delete(self, id):
         dict_item = DictItem.query.filter_by(id=id).first()
@@ -309,8 +309,8 @@ class DictItemResource(Resource):
             db.session.delete(dict_item)
             db.session.commit()
         else:
-            return return_code.NOT_FOUND, 200
-        return return_code.SUCCESS, 200
+            return return_code.NOT_FOUND.d, 200
+        return return_code.SUCCESS.d, 200
 
 
 class DictItemList(Resource):

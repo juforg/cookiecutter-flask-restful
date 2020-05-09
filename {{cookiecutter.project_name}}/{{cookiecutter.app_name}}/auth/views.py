@@ -15,7 +15,7 @@ from {{cookiecutter.app_name}}.auth.helpers import (
     is_token_revoked,
     add_token_to_database
 )
-from {{cookiecutter.app_name}}.commons.constants.return_code import ReturnCode
+from {{cookiecutter.app_name}}.commons.constants import return_code
 import logging
 
 logger = logging.getLogger(__name__)
@@ -62,31 +62,31 @@ def login():
       security: []
     """
     if not request.is_json:
-        return ReturnCode.JSON_PARSE_FAIL, 200
+        return return_code.JSON_PARSE_FAIL, 200
     ret = {}
     try:
 
         username = request.json.get('username', None)
         password = request.json.get('password', None)
         if not username or not password:
-            return ReturnCode.USER_NOT_FOUND, 200
+            return return_code.USER_NOT_FOUND, 200
 
         user = User.query.filter_by(username=username).first()
         if user is None or not pwd_context.verify(password, user.password):
-            return ReturnCode.NAME_PWD_INVALID, 200
+            return return_code.NAME_PWD_INVALID, 200
 
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
         add_token_to_database(access_token, app.config['JWT_IDENTITY_CLAIM'])
         add_token_to_database(refresh_token, app.config['JWT_IDENTITY_CLAIM'])
-        ret = {"data": {
+        ret = {
             'token': access_token,
             'refresh_token': refresh_token
-        }}
+        }
     except BaseException as e:
         logger.exception(e)
-        return ReturnCode.UNKNOWN_ERROR, 200
-    return dict(ret, **ReturnCode.OK), 200
+        return return_code.UNKNOWN_ERROR, 200
+    return return_code.SUCCESS.data(ret), 200
 
 
 @blueprint.route('/refresh', methods=['POST'])
@@ -120,11 +120,11 @@ def refresh():
     """
     current_user = get_jwt_identity()
     access_token = create_access_token(identity=current_user)
-    ret = {"data": {
+    ret =  {
         'token': access_token
-    }}
+    }
     add_token_to_database(access_token, app.config['JWT_IDENTITY_CLAIM'])
-    return dict(ret, **ReturnCode.OK), 200
+    return return_code.SUCCESS.data(ret), 200
 
 
 @blueprint.route('/revoke_access', methods=['DELETE'])
@@ -154,7 +154,7 @@ def revoke_access_token():
     jti = get_raw_jwt()['jti']
     user_identity = get_jwt_identity()
     revoke_token(jti, user_identity)
-    return ReturnCode.OK, 200
+    return return_code.SUCCESS.d, 200
 
 
 @blueprint.route('/revoke_refresh', methods=['DELETE'])
@@ -184,7 +184,7 @@ def revoke_refresh_token():
     jti = get_raw_jwt()['jti']
     user_identity = get_jwt_identity()
     revoke_token(jti, user_identity)
-    return ReturnCode.OK, 200
+    return return_code.SUCCESS.d, 200
 
 
 @jwt.user_loader_callback_loader
@@ -198,12 +198,12 @@ def check_if_token_revoked(decoded_token):
 
 @jwt.expired_token_loader
 def expired_token_callback():
-    return ReturnCode.LOGIN_EXPIRED, 200
+    return return_code.LOGIN_EXPIRED, 200
 
 # 无效令牌
 @jwt.invalid_token_loader
 def invalid_token_callback(error):  # we have to keep the argument here, since it's passed in by the caller internally
-    return ReturnCode.INVALID_TOKEN, 200
+    return return_code.INVALID_TOKEN, 200
 
 @blueprint.before_app_first_request
 def register_views():
