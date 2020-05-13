@@ -44,14 +44,14 @@ source ~/.zshrc
 #### 虚拟环境
 
 - 创建某个Python版本的虚拟环境
-    `pyenv virtualenv 3.7.2 wb-venv`
+    `pyenv virtualenv 3.7.2 {{cookiecutter.app_name}}-venv`
 - 激活和停用虚拟环境：
-    `pyenv activate wb-venv`
+    `pyenv activate {{cookiecutter.app_name}}-venv`
     `pyenv deactivate`
 - 列出当前所有的虚拟环境：
     `pyenv virtualenvs`
 - 删除虚拟环境：
-    `pyenv virtualenv-delete wb-venv`
+    `pyenv virtualenv-delete {{cookiecutter.app_name}}-venv`
 ## 安装依赖:
 1. `pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/`
 
@@ -59,20 +59,24 @@ source ~/.zshrc
 |----|----|----|
 |python-dotenv|加载.flaskenv配置到环境变量中||
 |mip|||
+|celery|异步任务/定时任务框架|4.3|
+|flask-redis|redis集成|可被当作分布式锁|
+|marshmallow|序列化反序列化包|3|
+|pandas|结构化数据的分析工具集||
 
 ## 本地启动:
 - pycharm 启动
 ![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/8/9/1565328268382.png)
 - 启动异步任务
 ![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/8/29/1567073039461.png)
-`worker -A wms.celery_app:app --loglevel=info -B -E -Q CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_OUT,CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_IN,CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_OTHER --logfile=/opt/abi/algo/logs/celery-all.log`
+`worker -A {{cookiecutter.app_name}}.celery_app:app --loglevel=info -B -E -Q CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_OUT,CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_IN,CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_OTHER --logfile=/opt/abi/algo/logs/celery-all.log`
 - 启动定时任务
 ![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/10/17/1571296058664.png)
-`worker -A wms.celery_app:app --loglevel=info -Q timing_tasks_q -E -c 2`
+`worker -A {{cookiecutter.app_name}}.celery_app:app --loglevel=info -Q timing_tasks_q -E -c 2`
 - 命令行启动
     - `pip install -e .`
-    - `wms init`
-    - `wms run`
+    - `{{cookiecutter.app_name}} init`
+    - `{{cookiecutter.app_name}} run`
 
 - 生成代码
 ![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/10/19/1571492916689.png)
@@ -88,7 +92,7 @@ http://localhost:5000/swagger-ui
 
 ## 目录结构
 ├── README.md
-├── wms                  应用目录
+├── {{cookiecutter.app_name}}                  应用目录
 │   ├── __init__.py
 │   ├── api              对我开放接口
 │   │   ├── __init__.py
@@ -142,7 +146,7 @@ logger.exception(e) #打印异常堆栈
 
 4. sqlacchemy
     - 自定义表名 `__tablename__ = 'order'`
-    - 指定model数据源 `__bind_key__ = 'flux_wms'`
+    - 指定model数据源 `__bind_key__ = 'flux_{{cookiecutter.app_name}}'`
     - 有则更新无则修改`session.merge(model)`
     - 保存对象列表`db.session.add_all(tasks)`
     

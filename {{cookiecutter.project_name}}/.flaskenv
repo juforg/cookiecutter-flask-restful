@@ -4,5 +4,5 @@ SECRET_KEY=changeme
 DATABASE_URI=sqlite:////tmp/{{cookiecutter.app_name}}.db
 CELERY_BROKER_URL=amqp://guest:guest@localhost/
 CELERY_RESULT_BACKEND_URL=amqp://guest:guest@localhost/
-LOG_PATH=.
+LOG_PATH=./all.log
 DATA_PATH=.

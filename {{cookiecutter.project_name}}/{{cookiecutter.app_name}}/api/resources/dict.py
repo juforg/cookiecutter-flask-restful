@@ -31,7 +31,7 @@ class DictSchema(ma.Schema):
     updated_time = fields.String(dump_only=True, data_key='updatedTime')
 
 
-class DictDbSchema(ma.ModelSchema, DictSchema):
+class DictDbSchema(ma.SQLAlchemySchema, DictSchema):
     class Meta:
         model = Dict
         sqla_session = db.session
@@ -50,7 +50,7 @@ class DictItemSchema(ma.Schema):
     updated_time = fields.String(allow_none=True, dump_only=True, data_key='updatedTime')
 
 
-class DictItemDbSchema(ma.ModelSchema, DictItemSchema):
+class DictItemDbSchema(ma.SQLAlchemySchema, DictItemSchema):
     class Meta:
         model = DictItem
         sqla_session = db.session

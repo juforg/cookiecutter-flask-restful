@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 user_bp = Blueprint('user', __name__, url_prefix='/api/v1')
 
 
-class UserSchema(ma.ModelSchema):
+class UserSchema(ma.SQLAlchemySchema):
 
     id = ma.Int(dump_only=True)
     password = ma.String(load_only=True, required=True)

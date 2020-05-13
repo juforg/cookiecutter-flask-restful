@@ -1,22 +1,23 @@
-flask
-flask-restful
-flask-migrate
-flask-sqlalchemy
-flask-marshmallow
-flask-jwt-extended
+flask==1.1.2
+flask-restful==0.3.8
+flask-migrate==2.5.3
+flask-sqlalchemy==2.4.1
+flask-marshmallow==0.12.0
+flask-jwt-extended==3.24.1
 {%- if cookiecutter.use_excel == "yes" %}
 Flask-Excel==0.0.7
 pyexcel-xlsx==0.5.7
 {%- endif %}
 {%- if cookiecutter.use_redis == "yes" %}
-flask-redis
+flask-redis==0.4.0
 {%- endif %}
-marshmallow-sqlalchemy
-marshmallow
+marshmallow-sqlalchemy==0.23.0
+marshmallow==3.6.0
 python-dotenv
 passlib
 apispec[yaml]
 apispec-webframeworks
+pandas==0.24.2
 PyYAML==5.1.2
 tox
 {%- if cookiecutter.use_celery == "yes" %}
