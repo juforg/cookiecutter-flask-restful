@@ -66,7 +66,7 @@ class C(Exception):
         return self.dict()
 
     def dict(self):
-        if hasattr(self, "__data"):
+        if hasattr(self, "_C__data"):
             return {"code": self.__code, "msg": self.__msg, "data": self.__data}
         else:
             return {"code": self.__code, "msg": self.__msg}

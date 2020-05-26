@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 from {{cookiecutter.app_name}}.extensions import db
 from contextlib import contextmanager
-from pandas._libs.tslibs.timestamps import Timestamp
 import pandas as pd
 import logging
 
@@ -156,7 +155,7 @@ def process_df_to_db(data_df: DataFrame, keys: list = None):
     records = data_df.to_dict(orient='records')
     for record in records:
         for key in keys if keys else record.keys():
-            if isinstance(record[key], Timestamp):
+            if isinstance(record[key], pd.Timestamp):
                 record[key] = record[key].to_pydatetime()
             elif pd.isnull(record[key]):
                 record[key] = None

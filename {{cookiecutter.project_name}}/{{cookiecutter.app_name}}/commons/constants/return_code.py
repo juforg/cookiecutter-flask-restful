@@ -13,9 +13,9 @@ SUCCESS = C(200000, "成功")
 NO_RESULT = C(200001, "未生成任务")
 
 # 权限类
-# LOGIN_EXPIRED = C(300001, "登录过期")
-# INVALID_TOKEN = C(300002, "令牌无效")
-# INVALID_SIGNATURE = C(300003, "签名无效")
+LOGIN_EXPIRED = C(300001, "登录过期")
+INVALID_TOKEN = C(300002, "令牌无效")
+INVALID_SIGNATURE = C(300003, "签名无效")
 
 # 请求参数类
 PARAM_IS_NULL = C(400001, "请求参数为空")

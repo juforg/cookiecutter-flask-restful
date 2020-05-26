@@ -4,6 +4,7 @@ Use env var to override
 """
 import os, datetime
 from marshmallow import fields, validate
+from sqlalchemy.pool import QueuePool
 
 ENV = os.getenv("FLASK_ENV")
 DEBUG = ENV == "development"
@@ -17,9 +18,9 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 # 如果设置为Ture， SQLAlchemy 会记录所有 发给 stderr 的语句，这对调试有用。(打印sql语句)#sql 日志
 SQLALCHEMY_ECHO = True if os.getenv("SQLALCHEMY_ECHO") == "True" else False
 # 如果为True，则连接池将记录信息输出，例如连接失效时以及连接被回收到默认日志处理程序时，默认sys.stdout为输出。如果设置为字符串 "debug"，则日志记录将包括池检出和签入。使用标准Python logging模块也可以直接控制日志记录
-SQLALCHEMY_ECHO_POOL = True if os.getenv("SQLALCHEMY_ECHO_POOL") == "True" else False
+# SQLALCHEMY_ECHO_POOL = True if os.getenv("SQLALCHEMY_ECHO_POOL") == "True" else False
 # 默认2小时。该值一定要比数据库wait_timeout小，否则它不起作用
-SQLALCHEMY_POOL_RECYCLE = 3000
+# SQLALCHEMY_POOL_RECYCLE = 3000
 SQLALCHEMY_ENGINE_OPTIONS = {
     'pool_size': os.getenv("SQLALCHEMY_POOL_SIZE", 5),
     'max_overflow': os.getenv("SQLALCHEMY_POOL_OVERFLOW", 10),
@@ -28,7 +29,8 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     'pool_timeout': os.getenv("SQLALCHEMY_POOL_TIMEOUT", 20),
     'pool_pre_ping': True,   # 测试是否可用
     'pool_use_lifo': True,   # 越老的越容易被回收，一定要跟ping 配合，否则老的极易被回收造成连接不可用
-    'autocommit': True
+    'poolclass': QueuePool,
+    'isolation_level': 'AUTOCOMMIT'
 }
 JWT_SECRET_KEY = SECRET_KEY
 JWT_BLACKLIST_ENABLED = False
