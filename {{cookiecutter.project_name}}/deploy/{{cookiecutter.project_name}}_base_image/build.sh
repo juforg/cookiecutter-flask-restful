@@ -1,0 +1,1 @@
+docker build -t {{cookiecutter.app_name}}-base .

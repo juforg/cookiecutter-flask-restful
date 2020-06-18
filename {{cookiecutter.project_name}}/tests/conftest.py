@@ -34,7 +34,7 @@ def admin_user(db):
     )
 
     db.session.add(user)
-    db.session.commit()
+    # db.session.flush()
 
     return user
 

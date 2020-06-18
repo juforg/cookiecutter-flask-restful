@@ -16,14 +16,14 @@ logger = logging.getLogger(__name__)
 class DbUtil:
     session = None
 
-    def get_session(self, bind='{{cookiecutter.app_name}}'):
+    def get_session(self, bind='{{cookiecutter.app_name}}', autocommit=True):
         """
         使用了scoped_session 默认情况下，创建的session都是Thread-Local Scope
         :param bind:
         :return:
         """
         engine = db.get_engine(app=db.get_app(), bind=bind)
-        session_factory = sessionmaker(bind=engine)
+        session_factory = sessionmaker(bind=engine, autocommit=autocommit)
         _session = scoped_session(session_factory)
         self.session = _session()
         return self.session
@@ -81,8 +81,14 @@ class DbUtil:
     def __del__(self):
         self.session.close()
 
+def full_insert(session, schema_type, data_dict_list, model_type, request_id: str, is_src: bool, **kwargs):
+    start = time.time()
+    count = session.query(model_type).filter_by(**kwargs).delete()
+    logger.info("数据[%s]全量删除,request_id:[%s],kwargs:[%s]完成, 删除:%s,[performance-DD]耗时:[%s]", model_type.__tablename__, request_id, kwargs.__str__(), count, time.time() - start)
+    batch_insert(session, schema_type, data_dict_list, model_type, request_id, is_src, kwargs)
 
-def full_update(session, schema_type, data_dict_list, model_type, request_id: str, is_src: bool, **kwargs):
+
+def batch_insert(session, schema_type, data_dict_list, model_type, request_id: str, is_src: bool, **kwargs):
     """
     全量更新
     :param session:
@@ -95,8 +101,6 @@ def full_update(session, schema_type, data_dict_list, model_type, request_id: st
     :return:
     """
     start = time.time()
-    count = session.query(model_type).filter_by(**kwargs).delete()
-    logger.info("数据[%s]全量删除,request_id:[%s],kwargs:[%s]完成, 删除:%s,[performance-DD]耗时:[%s]", model_type.__tablename__, request_id, kwargs.__str__(), count, time.time() - start)
     step = 1000
     ni = 0
     while data_dict_list:

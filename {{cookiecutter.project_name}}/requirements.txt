@@ -23,7 +23,7 @@ pandas==0.24.2
 PyYAML==5.1.2
 tox
 {%- if cookiecutter.use_celery == "yes" %}
-celery[redis]
+celery[redis,msgpack]
 {%- endif %}
 {%- if cookiecutter.wsgi_server == "uwsgi" %}
 uwsgi
@@ -31,4 +31,7 @@ uwsgi
 {%- if cookiecutter.wsgi_server == "gunicorn" %}
 gunicorn
 gevent==1.4.0
+{%- endif %}
+{%- if cookiecutter.use_oracle == "yes" %}
+cx_Oracle==7.3.0
 {%- endif %}

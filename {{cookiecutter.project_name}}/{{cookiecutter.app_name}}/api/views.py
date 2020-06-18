@@ -3,13 +3,13 @@ from flask_restful import Api
 
 from {{cookiecutter.app_name}}.extensions import apispec
 from {{cookiecutter.app_name}}.api.resources import UserResource, UserList
-from {{cookiecutter.app_name}}.api.resources.user import UserSchema
+from {{cookiecutter.app_name}}.api.resources.user import UserSchema, UserInfo
 from {{cookiecutter.app_name}}.api.resources.dict import DictResource, DictList, DictItemResource, DictItemList, DictSchema, DictItemSchema
 
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
 api = Api(api_bp)
 
-
+api.add_resource(UserInfo, '/user/info')
 api.add_resource(UserResource, '/users/<int:user_id>')
 api.add_resource(UserList, '/users')
 api.add_resource(DictResource, '/dict/<int:id>')

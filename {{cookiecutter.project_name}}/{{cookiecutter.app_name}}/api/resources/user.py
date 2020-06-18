@@ -8,6 +8,7 @@ from {{cookiecutter.app_name}}.commons.constants import return_code
 from {{cookiecutter.app_name}}.models import User
 from {{cookiecutter.app_name}}.extensions import ma, db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
+from marshmallow import fields
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,12 +18,13 @@ user_bp = Blueprint('user', __name__, url_prefix='/api/v1')
 
 class UserSchema(ma.SQLAlchemySchema):
 
-    id = ma.Int(dump_only=True)
-    password = ma.String(load_only=True, required=True)
+    id = fields.Int(dump_only=True)
+    password = fields.String(load_only=True, required=True)
 
     class Meta:
         model = User
         sqla_session = db.session
+        load_instance = True
 
 
 class UserResource(Resource):
@@ -101,7 +103,7 @@ class UserResource(Resource):
         user = User.query.get(user_id)
         if user:
             ret = {"data": schema.dump(user.__dict__)}
-            return  return_code.SUCCESS.data(schema.dump(user.__dict__)), 200
+            return  return_code.SUCCESS.set_data(schema.dump(user.__dict__)), 200
         else:
             return return_code.NOT_FOUND.d, 200
 
@@ -111,16 +113,16 @@ class UserResource(Resource):
         # user = User.query.get(user_id)
         user = schema.load(request.json)
         session.merge(user)
-        session.commit()
+        # session.flush()
         return return_code.SUCCESS.d, 200
 
     def delete(self, user_id):
         user = User.query.get(user_id)
         if user:
             db.session.delete(user)
-            db.session.commit()
+            # db.session.flush()
         else:
-            return return_code.NOT_FOUND, 200
+            return return_code.NOT_FOUND.d, 200
         return return_code.SUCCESS.d, 200
 
 
@@ -170,13 +172,13 @@ class UserList(Resource):
         schema = UserSchema(many=True)
         query = User.query
         data = {"data": paginate(query, schema)}
-        return return_code.SUCCESS.data(paginate(query, schema)).d, 200
+        return return_code.SUCCESS.set_data(paginate(query, schema)).d, 200
 
     def post(self):
         schema = UserSchema(unknown=True)
         user = schema.load(request.json)
         db.session.add(user)
-        db.session.commit()
+        # db.session.flush()
         return return_code.SUCCESS.d, 200
 
 
@@ -190,7 +192,7 @@ class UserInfo(Resource):
         # user.roles = [user.roles]
         schema = UserSchema(unknown=True)
         if user:
-            return return_code.SUCCESS.data(schema.dump(user.__dict__)).d, 200
+            return return_code.SUCCESS.set_data(schema.dump(user.__dict__)).d, 200
         else:
             return return_code.USER_NOT_FOUND.d, 200
 
@@ -204,7 +206,7 @@ def export_list():
     is_or_not_map = common_fun.get_dict_map(const.IS_OR_NOT_DICT_KEY)
     for r in datas:
         r.is_caiyin = is_or_not_map.get(str(r.is_caiyin), r.is_caiyin)
-    return return_code.SUCCESS.data(schema.dump(datas)).d, 200
+    return return_code.SUCCESS.set_data(schema.dump(datas)).d, 200
 
 
 {%- if cookiecutter.use_excel == "yes" %}
@@ -222,6 +224,6 @@ def import_excel():
                              schema_type=UserSchema,
                              is_src=True,
                              request_id=get_jwt_identity())
-    session.commit()
+    # session.flush()
     return return_code.SUCCESS.d, 200
 {%- endif %}

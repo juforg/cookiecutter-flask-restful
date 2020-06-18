@@ -14,14 +14,17 @@ fi
 done
 echo $opt
 if [ "$opt" = "是" ];then
-  cd ./{{cookiecutter.app_name}}_base_image
-  docker build -t {{cookiecutter.app_name}}-base .
+  docker build -t {{cookiecutter.app_name}}-base ./{{cookiecutter.app_name}}_base_image
 fi
-cd /home/{{cookiecutter.app_name}}/docker/
-ENV_FILE_NAME=flask{{cookiecutter.app_name}}proenv docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-be
-ENV_FILE_NAME=flask{{cookiecutter.app_name}}proenv docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-fe
+mkdir - p ./workspace/logs
+mkdir - p ./workspace/data
+mkdir - p ./workspace/celery/logs
+mkdir - p ./workspace/celery/data
+mkdir - p ./workspace/nginx
+USER_ID=$(id -u) ENV_FILE_NAME=flask{{cookiecutter.app_name}}proenv docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-web
+USER_ID=$(id -u) ENV_FILE_NAME=flask{{cookiecutter.app_name}}proenv docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-fe
 USER_ID=$(id -u) ENV_FILE_NAME=flask{{cookiecutter.app_name}}proenv  docker-compose up -d
 
 docker rm $(docker ps -a|grep Exited| awk '{print $1}')
 docker rmi $(docker images | grep 'none' | awk '{print $3}')
-docker exec -uroot {{cookiecutter.app_name}}-be  chown -R app:app /opt/{{cookiecutter.app_name}}
+docker exec -uroot {{cookiecutter.app_name}}-web  chown -R app:app /opt/{{cookiecutter.app_name}}

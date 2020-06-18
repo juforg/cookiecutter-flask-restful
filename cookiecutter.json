@@ -8,6 +8,7 @@
     "use_redis": ["no", "yes"],
     "use_LightGBM": ["no", "yes"],
     "use_mssql": ["no", "yes"],
+    "use_oracle": ["no", "yes"],
     "admin_user_username": "admin",
     "admin_user_email": "admin@mail.com",
     "admin_user_password": "admin",

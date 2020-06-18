@@ -18,7 +18,7 @@ from flask_redis import FlaskRedis
 from {{cookiecutter.app_name}}.commons.apispec import APISpecExt
 
 
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={'autocommit': True})
 jwt = JWTManager()
 ma = Marshmallow()
 migrate = Migrate()

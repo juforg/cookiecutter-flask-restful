@@ -244,21 +244,26 @@ def package_script():
 
 
 if __name__ == '__main__':
+    print("开始时间: " + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     try:
         title1 = '请选择环境:'
-        option1 = ['ss-{{cookiecutter.app_name}}-test-01(127.0.0.1)', 'ss-{{cookiecutter.app_name}}-pro-01(127.0.0.1)']
+        option1 = ['vk-vas-test-01(172.16.206.60)', 'vk-vas-pro-02(127.0.0.1)']
         selected1, idx1 = pick(option1, title1, multi_select=False, min_selection_count=1)
-        title2 = '请选择是否重新构建基础镜像:'
-        option2 = ['否', '是']
+        title2 = '请选择前端打包环境:'
+        option2 = ['测试', '生产']
         selected2, idx2 = pick(option2, title2, multi_select=False, min_selection_count=1)
-        title3 = '请选择前端打包环境:'
-        option3 = ['测试', '生产']
+        title3 = '请选择是否直接上传部署:'
+        option3 = ['否', '是']
         selected3, idx3 = pick(option3, title3, multi_select=False, min_selection_count=1)
         fe_build_test = False
         rebuild_base_image = False
         # rebuild_fe_image = True
-        if idx2 == 1:
-            rebuild_base_image = True
+        if idx3 == 1:
+            title4 = '请选择是否重新构建基础镜像:'
+            option4 = ['否', '是']
+            selected4, idx4 = pick(option4, title4, multi_select=False, min_selection_count=1)
+            if idx4 == 1:
+                rebuild_base_image = True
         server_config = None
         if idx1 == 0:
             server_config = ss_{{cookiecutter.app_name}}_test_config_dict1
@@ -267,7 +272,7 @@ if __name__ == '__main__':
         if server_config is None:
             raise Exception('select index error')
         print(os.getcwd())
-        if idx3 == 0:
+        if idx2 == 0:
             fe_build_test = True
 
         server_ip = server_config['server_ip']
@@ -299,7 +304,7 @@ if __name__ == '__main__':
         remote_path = base_path
         print(be_zip_file_path)
         build_and_package()
-        if idx1 == 0:
+        if idx3 == 0:
             upload()
             remote_build()
             clean_all()
@@ -311,3 +316,5 @@ if __name__ == '__main__':
         logger.exception(e)
     except IOError as e:
         logger.exception(e)
+    finally:
+        print("完成时间: " + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

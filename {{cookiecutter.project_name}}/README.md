@@ -63,6 +63,7 @@ source ~/.zshrc
 |flask-redis|redis集成|可被当作分布式锁|
 |marshmallow|序列化反序列化包|3|
 |pandas|结构化数据的分析工具集||
+|sqlacodegen|生成sqlalchemy的model代码||
 
 ## 本地启动:
 - pycharm 启动
@@ -91,21 +92,32 @@ source ~/.zshrc
 http://localhost:5000/swagger-ui
 
 ## 目录结构
+````
 ├── README.md
-├── {{cookiecutter.app_name}}                  应用目录
+├── {{cookiecutter.app_name}}                   应用目录
 │   ├── __init__.py
-│   ├── api              对我开放接口
+│   ├── api              对外开放接口
 │   │   ├── __init__.py
 │   │   └── views.py
-|   ├── alg             算法入口
-│   ├── extensions.py
-│   └── models          数据模型
-├── config.py
+|   ├── algo             算法核心程序
+|   ├── auth             登录专用接口目录
+|   ├── commons          可复用代码目录
+│   │   └── constants    常量定义目录
+│   │   │   └── const.py    常量定义
+│   │   │   └── return_code.py    错误码定义
+│   │   └── utils        工具类
+│   ├── extensions.py   第三方组件初始化
+│   └── models          数据模型目录
+│   └── tasks           celery异步定时任务目录
+├── config.py           配置相关
 ├── dist                生成加密文件目录 用于发布
-├── requirements.txt    主程序必备pip包
+├── requirements.txt    主程序必备pip包列表
 ├── test_requirements.txt    测试用pip包非必须
 ├── freeze_requirements.txt    稳定的pip包,注意不能安装垃圾
 └── tests               测试问目录
+└── sql                 存放数据库脚本目录
+````
+
 ## 配置
 - 环境变量
 安装`python-dotenv` 包后 会自动加载 `.env` 和`.flaskenv`文件，.env 文件会覆盖.flaskenv的配置，适合本地特殊配置，但不能够提交
@@ -167,6 +179,17 @@ select @@global.tx_isolation,@@tx_isolation;
  ## 日志滚动
  使用 linux 自带的 logrotate
  https://blog.zengrong.net/post/flask-uwsgi-logging-rotate/
+{%- if cookiecutter.use_oracle == "yes" %}
+`cp instantclient-basic-macos.x64-11.2.0.4.0.zip /opt/oracle/`
+`cp /opt/oracle/instantclient_11_2/{libclntsh.dylib.11.1,libnnz11.dylib,libociei.dylib} ~/lib/`
+![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/11/16/1573912336527.png)
+
+https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html
+https://www.oracle.com/database/technologies/instant-client/macos-intel-x86-downloads.html 
+{%- endif %}
+
+
+
 ## 文档
 - http://www.pythondoc.com/flask/index.html
 - http://www.pythondoc.com/flask-sqlalchemy/index.html
@@ -187,3 +210,4 @@ select @@global.tx_isolation,@@tx_isolation;
 - https://flower.readthedocs.io/
 - https://www.cnblogs.com/xybaby/p/9197032.html
 - https://medium.com/@rob.blackbourn/how-to-use-python-logging-queuehandler-with-dictconfig-1e8b1284e27a
+- https://www.cnblogs.com/cwp-bg/p/8759638.html

@@ -33,7 +33,7 @@ def add_token_to_database(encoded_token, identity_claim):
         revoked=revoked,
     )
     db.session.add(db_token)
-    db.session.commit()
+    # db.session.flush()
 
 
 def is_token_revoked(decoded_token):
@@ -60,6 +60,6 @@ def revoke_token(token_jti, user):
     try:
         token = TokenBlacklist.query.filter_by(jti=token_jti, user_id=user).one()
         token.revoked = True
-        db.session.commit()
+        # db.session.flush()
     except NoResultFound:
         raise Exception("Could not find the token {}".format(token_jti))

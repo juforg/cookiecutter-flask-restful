@@ -21,7 +21,7 @@ def test_get_user(client, db, user, admin_headers):
     assert rep.status_code == 404
 
     db.session.add(user)
-    db.session.commit()
+    # db.session.flush()
 
     # test get_user
     rep = client.get('/api/v1/users/%d' % user.id, headers=admin_headers)
@@ -39,7 +39,7 @@ def test_put_user(client, db, user, admin_headers):
     assert rep.status_code == 404
 
     db.session.add(user)
-    db.session.commit()
+    # db.session.flush()
 
     data = {'username': 'updated'}
 
@@ -63,7 +63,7 @@ def test_delete_user(client, db, user, admin_headers):
     assert rep.status_code == 404
 
     db.session.add(user)
-    db.session.commit()
+    # db.session.flush()
 
     # test get_user
     user_id = user.id
@@ -108,7 +108,7 @@ def test_get_all_user(client, db, user_factory, admin_headers):
     users = user_factory.create_batch(30)
 
     db.session.add_all(users)
-    db.session.commit()
+    # db.session.flush()
 
     rep = client.get('/api/v1/users', headers=admin_headers)
     assert rep.status_code == 200

@@ -1,4 +1,8 @@
 FROM python:3.7.2-slim-stretch
+{%- if cookiecutter.use_oracle == "yes" %}
+ENV LD_LIBRARY_PATH="/usr/local/lib;/usr/local/instantclient"
+ENV NLS_LANG="AMERICAN_AMERICA.AL32UTF8"
+{%- endif %}
 {%- if cookiecutter.use_LightGBM == "yes" %}
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -10,6 +14,10 @@ RUN apt-get update && \
     git \
     gnupg2 \
     curl \
+    {%- if cookiecutter.use_oracle == "yes" %}
+    libaio1 \
+    unzip \
+    {%- endif %}
     apt-transport-https \
     wget && \
     {%- if cookiecutter.use_mssql == "yes" %}
@@ -23,6 +31,11 @@ RUN apt-get update && \
     git clone --recursive --branch v2.2.3 --depth 1 https://github.com/Microsoft/LightGBM && \
 #    git checkout v2.2.3 && \
     cd LightGBM/python-package && python setup.py install && \
+    #oracle
+    wget https://github.com/pwnlabs/oracle-instantclient/raw/master/instantclient-basic-linux.x64-11.2.0.4.0.zip -O /tmp/instantclient-basic-linux.x64-11.2.0.4.0.zip && \
+    unzip /tmp/instantclient-basic-linux.x64-11.2.0.4.0.zip -d /usr/local/ && \
+    ln -s /usr/local/instantclient_11_2 /usr/local/instantclient && \
+    ln -s /usr/local/instantclient/libclntsh.so.11.1 /usr/local/instantclient/libclntsh.so
     # clean
     apt-get autoremove -y && apt-get clean && \
     rm -rf /usr/local/src/*
@@ -30,9 +43,16 @@ RUN apt-get update && \
 
 
 ADD requirements.txt /requirements.txt
-RUN pip install pystan -i https://mirrors.aliyun.com/pypi/simple
 RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple \
     && pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple \
+    && pip install pystan -i https://mirrors.aliyun.com/pypi/simple \
     && pip install gunicorn -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# clean
+RUN apt-get clean -y && \
+    apt-get autoclean -y && \
+    apt-get remove -y wget make autoconf g++ unzip && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /var/lib/log/* /tmp/* /var/tmp/*
 
 #ENTRYPOINT /bin/bash

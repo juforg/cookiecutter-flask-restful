@@ -62,18 +62,18 @@ def login():
       security: []
     """
     if not request.is_json:
-        return return_code.JSON_PARSE_FAIL, 200
+        return return_code.JSON_PARSE_FAIL.d, 200
     ret = {}
     try:
 
         username = request.json.get('username', None)
         password = request.json.get('password', None)
         if not username or not password:
-            return return_code.USER_NOT_FOUND, 200
+            return return_code.USER_NOT_FOUND.d, 200
 
         user = User.query.filter_by(username=username).first()
         if user is None or not pwd_context.verify(password, user.password):
-            return return_code.NAME_PWD_INVALID, 200
+            return return_code.NAME_PWD_INVALID.d, 200
 
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
@@ -85,8 +85,8 @@ def login():
         }
     except BaseException as e:
         logger.exception(e)
-        return return_code.UNKNOWN_ERROR, 200
-    return return_code.SUCCESS.data(ret), 200
+        return return_code.UNKNOWN_ERROR.d, 200
+    return return_code.SUCCESS.set_data(ret).d, 200
 
 
 @blueprint.route('/refresh', methods=['POST'])
@@ -124,7 +124,7 @@ def refresh():
         'token': access_token
     }
     add_token_to_database(access_token, app.config['JWT_IDENTITY_CLAIM'])
-    return return_code.SUCCESS.data(ret), 200
+    return return_code.SUCCESS.set_data(ret).d, 200
 
 
 @blueprint.route('/revoke_access', methods=['DELETE'])
@@ -198,12 +198,12 @@ def check_if_token_revoked(decoded_token):
 
 @jwt.expired_token_loader
 def expired_token_callback():
-    return return_code.LOGIN_EXPIRED, 200
+    return return_code.LOGIN_EXPIRED.d, 200
 
 # 无效令牌
 @jwt.invalid_token_loader
 def invalid_token_callback(error):  # we have to keep the argument here, since it's passed in by the caller internally
-    return return_code.INVALID_TOKEN, 200
+    return return_code.INVALID_TOKEN.d, 200
 
 @blueprint.before_app_first_request
 def register_views():

@@ -32,7 +32,7 @@ def init():
         active=True
     )
     db.session.add(user)
-    db.session.commit()
+    # db.session.flush()
     click.echo("created user admin")
 
 

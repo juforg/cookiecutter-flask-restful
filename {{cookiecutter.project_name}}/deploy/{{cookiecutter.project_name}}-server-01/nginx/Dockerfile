@@ -1,4 +1,4 @@
-FROM nginx:1.16.0-alpine
+FROM nginx:1.17.3-alpine
 ARG USER_ID
 RUN echo $USER_ID
 

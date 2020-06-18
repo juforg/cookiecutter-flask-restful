@@ -35,6 +35,9 @@ SQLALCHEMY_ENGINE_OPTIONS = {
 JWT_SECRET_KEY = SECRET_KEY
 JWT_BLACKLIST_ENABLED = False
 JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
+JWT_TOKEN_LOCATION = ('headers', 'cookies')
+JWT_COOKIE_CSRF_PROTECT = False if os.getenv("JWT_COOKIE_CSRF_PROTECT") == "False" else True
+JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
 JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=120)
 {%- if cookiecutter.use_celery == "yes" %}
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
