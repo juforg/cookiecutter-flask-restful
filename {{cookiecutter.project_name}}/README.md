@@ -64,6 +64,7 @@ source ~/.zshrc
 |marshmallow|序列化反序列化包|3|
 |pandas|结构化数据的分析工具集||
 |sqlacodegen|生成sqlalchemy的model代码||
+|cachetools|方法结果缓存||
 
 ## 本地启动:
 - pycharm 启动

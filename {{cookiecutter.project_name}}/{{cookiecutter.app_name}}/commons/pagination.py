@@ -1,6 +1,7 @@
 """Simple helper to paginate query
 """
 from flask import url_for, request
+from sqlalchemy import text
 
 DEFAULT_PAGE_SIZE = 50
 DEFAULT_PAGE_NUMBER = 1
@@ -9,6 +10,9 @@ DEFAULT_PAGE_NUMBER = 1
 def paginate(query, schema):
     page = request.args.get('page', DEFAULT_PAGE_NUMBER)
     per_page = request.args.get('page_size', DEFAULT_PAGE_SIZE)
+    sort = request.args.get("sort", None)
+    if sort:
+        query = query.order_by(text(sort))
     page_obj = query.paginate(page=page, per_page=per_page)
     next = url_for(
         request.endpoint,

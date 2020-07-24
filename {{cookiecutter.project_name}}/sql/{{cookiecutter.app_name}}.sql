@@ -1,6 +1,7 @@
 create database {{cookiecutter.app_name}} default charset utf8mb4 collate utf8mb4_bin;
 CREATE USER '{{cookiecutter.app_name}}'@'%' IDENTIFIED BY '123456';
-grant all privileges  on {{cookiecutter.app_name}}.* to '{{cookiecutter.app_name}}'@'localhost';
+grant all privileges  on {{cookiecutter.app_name}}.* to '{{cookiecutter.app_name}}'@'localhost' IDENTIFIED BY '123456';
+flush privileges;
 use {{cookiecutter.app_name}};
 CREATE TABLE user(
     id INT NOT NULL AUTO_INCREMENT  COMMENT '主键' ,
