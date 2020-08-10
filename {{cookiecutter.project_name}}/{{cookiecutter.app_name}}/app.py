@@ -93,7 +93,7 @@ def register_blueprints(app):
 
 def init_celery(app=None):
     app = app or create_app()
-    celery.conf.broker_url = app.config['CELERY_BROKER_URL']
+    celery.conf.BROKER_URL = app.config['CELERY_BROKER_URL']
     celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']
     # celery.conf.CELERYBEAT_SCHEDULE = {
     #     'prepare_data_task': {
