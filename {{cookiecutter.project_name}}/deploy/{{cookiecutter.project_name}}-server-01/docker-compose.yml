@@ -21,7 +21,7 @@ services:
     {{cookiecutter.app_name}}-celery:
         container_name: {{cookiecutter.app_name}}-celery
         image: {{cookiecutter.app_name}}-be:latest
-        command: "celery worker -A {{cookiecutter.app_name}}.celery_app:app --loglevel=info --logfile=/opt/{{cookiecutter.app_name}}/logs/celery.log"
+        command: "celery worker -A {{cookiecutter.app_name}}.celery_app:app --loglevel=info --logfile=/opt/{{cookiecutter.app_name}}/logs/celery.log --heartbeat-interval=15"
         environment:
           - USER_ID=${USER_ID}
         env_file:
