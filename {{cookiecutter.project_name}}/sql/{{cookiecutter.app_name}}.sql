@@ -1,6 +1,6 @@
 create database {{cookiecutter.app_name}} default charset utf8mb4 collate utf8mb4_bin;
-CREATE USER '{{cookiecutter.app_name}}'@'%' IDENTIFIED BY '123456';
-grant all privileges  on {{cookiecutter.app_name}}.* to '{{cookiecutter.app_name}}'@'localhost' IDENTIFIED BY '123456';
+CREATE USER '{{cookiecutter.app_name}}'@'%' IDENTIFIED BY 'hmjNMC5ap49c';
+grant all privileges  on {{cookiecutter.app_name}}.* to '{{cookiecutter.app_name}}'@'localhost' IDENTIFIED BY 'hmjNMC5ap49c';
 flush privileges;
 use {{cookiecutter.app_name}};
 CREATE TABLE user(

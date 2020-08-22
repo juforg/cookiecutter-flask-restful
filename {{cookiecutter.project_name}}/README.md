@@ -58,13 +58,19 @@ source ~/.zshrc
 |包名|说明|版本要求|
 |----|----|----|
 |python-dotenv|加载.flaskenv配置到环境变量中||
-|mip|||
+|mip|混合整数规划|1.9.0|
+|PuLP|混合整数规划|2.0|
 |celery|异步任务/定时任务框架|4.3|
 |flask-redis|redis集成|可被当作分布式锁|
 |marshmallow|序列化反序列化包|3|
 |pandas|结构化数据的分析工具集||
 |sqlacodegen|生成sqlalchemy的model代码||
 |cachetools|方法结果缓存||
+|pyarmor|python代码加密||
+|aiohttp|异步http请求||
+|pick|命令行选则器||
+|click|flask命令行强化|7.0|
+|joblib|模型转文件||
 
 ## 本地启动:
 - pycharm 启动
@@ -82,6 +88,7 @@ source ~/.zshrc
 
 - 生成代码
 ![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/10/19/1571492916689.png)
+![generate_model](https://i.loli.net/2020/08/23/tcF34CwQox96Vkz.png)
 
 - 启动flower监控celery
 ![](https://i.loli.net/2019/12/18/GfBqLFyVhlPeco4.png)

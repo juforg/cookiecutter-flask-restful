@@ -6,7 +6,7 @@ __version__ = '0.1'
 setup(
     name='{{cookiecutter.app_name}}',
     version=__version__,
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(exclude=['tests', 'deploy', 'sql']),
     install_requires=[
         'flask',
         'flask-sqlalchemy',

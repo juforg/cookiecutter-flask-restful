@@ -2,7 +2,7 @@ import click
 from flask.cli import FlaskGroup
 
 from {{cookiecutter.app_name}}.app import create_app
-
+from tests.generator import model_generator
 
 def create_{{cookiecutter.app_name}}(info):
     return create_app(cli=True)
@@ -35,6 +35,11 @@ def init():
     # db.session.flush()
     click.echo("created user admin")
 
+@cli.command("generagte_model")
+def generagte_model():
+    click.echo("start generagte models")
+    model_generator.start()
+    click.echo("finish !!!")
 
 if __name__ == "__main__":
     cli()

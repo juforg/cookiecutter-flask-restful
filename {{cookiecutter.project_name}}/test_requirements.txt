@@ -15,3 +15,4 @@ pyecharts-javascripthon==0.0.6
 pyecharts-jupyter-installer==0.0.3
 pyecharts-snapshot==0.2.0
 flask-sqlacodegen
+tox
