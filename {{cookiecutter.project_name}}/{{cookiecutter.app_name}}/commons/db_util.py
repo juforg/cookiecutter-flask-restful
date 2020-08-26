@@ -164,3 +164,26 @@ def process_df_to_db(data_df: DataFrame, keys: list = None):
             elif pd.isnull(record[key]):
                 record[key] = None
     return records
+
+
+type_dict = {
+    "BIGINT": "Int",
+    "INT": "Int",
+    "INTEGER": "Int",
+    "SMALLINT": "Int",
+    "DECIMAL": "Float",
+    "Float": "Float",
+    "TIMESTAMP": "DateTime",
+    "DATETIME": "DateTime",
+    "DATE": "Date",
+    "TIME": "Time",
+    "TEXT": "String",
+    "VARCHAR": "String",
+    "NVARCHAR": "String",
+    "NCHAR": "String",
+    "CHAR": "String",
+}
+
+
+def dbtype_transfer(obj):
+    return type_dict.get(obj)

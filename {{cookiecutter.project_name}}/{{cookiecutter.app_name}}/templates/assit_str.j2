@@ -1,0 +1,15 @@
+
+# resources 下 init文件
+from .{{title_lower}} import {{title_lower | to_pascal_case }}Resource, {{title_lower | to_pascal_case }}List
+    '{{title_lower | to_pascal_case }}Resource',
+    '{{title_lower | to_pascal_case }}List',
+
+
+# views文件
+from {{cookiecutter.app_name}}.api.resources import {{title_lower | to_pascal_case }}Resource, {{title_lower | to_pascal_case }}List
+api.add_resource({{title_lower | to_pascal_case }}Resource, '/{{title_lower}}/<int:id>')
+api.add_resource({{title_lower | to_pascal_case }}List, '/{{title_lower}}s')
+
+# app 文件
+ app.register_blueprint(api.resources.{{title_lower}}.{{title_lower}}_bp)
+

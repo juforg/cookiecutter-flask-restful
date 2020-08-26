@@ -17,6 +17,7 @@ api.add_resource(DictList, '/dicts')
 api.add_resource(DictItemResource, '/dict_item/<int:id>')
 api.add_resource(DictItemList, '/dict_items/<string:dict_code>')
 
+
 @api_bp.before_app_first_request
 def register_views():
     apispec.spec.components.schema("UserSchema", schema=UserSchema)

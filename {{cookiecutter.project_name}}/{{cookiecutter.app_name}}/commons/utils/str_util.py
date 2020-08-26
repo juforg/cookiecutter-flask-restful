@@ -37,3 +37,27 @@ def is_float(str_number: str):
     """
     value = re.compile(r'^[-+]?[0-9]+\.[0-9]+$')  # 定义正则表达式
     return value.match(str_number)
+
+
+def to_camel_case(text):
+    arr = filter(None, text.lower().split('_'))
+    # _snake_case = re.compile(r"(?<=\w)_(\w)")
+    res = ''
+    j = 0
+    for i in arr:
+        if j == 0:
+            res = i
+        else:
+            res = res + i[0].upper() + i[1:]
+        j += 1
+    return res
+
+
+def to_pascal_case(text):
+    arr = filter(None, text.lower().split('_'))
+    res = ''
+    j = 0
+    for i in arr:
+        res = res + i[0].upper() + i[1:]
+        j += 1
+    return res

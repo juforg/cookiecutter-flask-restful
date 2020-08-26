@@ -1,0 +1,25 @@
+{
+  "code": 200000,
+  "data": {
+    {% for col in columns%}"{{col.name | to_camel_case}}": "{{col.type.__class__.__name__ | factoryboy_gen}}",
+    {% endfor %}
+  },
+  "msg": "成功"
+}
+
+# list
+
+{
+  "code": "200000",
+  "msg": "成功",
+  "data": {
+    "total": 5,
+    "pages": 1,
+    "items": [
+      {
+        {% for col in columns%}"{{col.name | to_camel_case}}": "{{col.type.__class__.__name__ | factoryboy_gen}}",
+        {% endfor %}
+      }
+    ]
+  }
+}
