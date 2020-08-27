@@ -1,0 +1,44 @@
+version: 1
+disable_existing_loggers: false
+
+objects:
+  queue:
+    class: queue.Queue
+    maxsize: -1
+formatters:
+  simple:
+    format: '%(asctime)s  %(levelname)s %(funcName)s(): %(message)s'
+  standard:
+    format: '%(asctime)s %(levelname)s %(process)d %(name)s.%(funcName)s(): %(message)s'
+  error:
+    format: "%(asctime)s %(levelname)s <PID %(process)d:%(processName)s> %(name)s.%(funcName)s(): %(message)s"
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: standard
+    stream: ext://sys.stdout
+  all_file_handler:
+    class: logging.handlers.WatchedFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: $LOG_PATH/all.log
+    encoding: utf8
+  queue_listener_handler:
+    class: wms.plugin.QueueListenerHandler
+    handlers:
+      - cfg://handlers.all_file_handler
+    queue: cfg://objects.queue
+loggers:
+  wms:
+    level: DEBUG
+    handlers: [queue_listener_handler]
+    propogate: no
+  alg:
+    level: DEBUG
+    handlers: [queue_listener_handler]
+    propogate: no
+root:
+    level: INFO
+    handlers: [queue_listener_handler]
+    propogate: no

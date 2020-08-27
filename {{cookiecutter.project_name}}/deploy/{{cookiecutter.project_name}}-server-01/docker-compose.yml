@@ -24,13 +24,12 @@ services:
         command: "celery worker -A {{cookiecutter.app_name}}.celery_app:app --loglevel=info --logfile=/opt/{{cookiecutter.app_name}}/logs/celery.log --heartbeat-interval=15"
         environment:
           - USER_ID=${USER_ID}
+          - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq
+          - CELERY_RESULT_BACKEND_URL=redis://redis
         env_file:
           - ./${ENV_FILE_NAME}
         depends_on:
           - rabbitmq
-        environment:
-          - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq
-          - CELERY_RESULT_BACKEND_URL=redis://redis
         volumes:
           - ./workspace/celery/logs:/opt/{{cookiecutter.app_name}}/logs
           - ./workspace/celery/data:/opt/{{cookiecutter.app_name}}/data

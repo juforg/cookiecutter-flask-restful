@@ -21,9 +21,9 @@ mkdir - p ./workspace/data
 mkdir - p ./workspace/celery/logs
 mkdir - p ./workspace/celery/data
 mkdir - p ./workspace/nginx
-USER_ID=$(id -u) ENV_FILE_NAME=flask{{cookiecutter.app_name}}proenv docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-web
-USER_ID=$(id -u) ENV_FILE_NAME=flask{{cookiecutter.app_name}}proenv docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-fe
-USER_ID=$(id -u) ENV_FILE_NAME=flask{{cookiecutter.app_name}}proenv  docker-compose up -d
+USER_ID=$(id -u) ENV_FILE_NAME=flask{{cookiecutter.app_name}}env docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-web
+USER_ID=$(id -u) ENV_FILE_NAME=flask{{cookiecutter.app_name}}env docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-fe
+USER_ID=$(id -u) ENV_FILE_NAME=flask{{cookiecutter.app_name}}env  docker-compose up -d
 
 docker rm $(docker ps -a|grep Exited| awk '{print $1}')
 docker rmi $(docker images | grep 'none' | awk '{print $3}')
