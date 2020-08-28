@@ -13,5 +13,5 @@ NLS_LANG=AMERICAN_AMERICA.AL32UTF8
 {%- endif %}
 CELERY_BROKER_URL=amqp://guest:guest@localhost/
 CELERY_RESULT_BACKEND_URL=amqp://guest:guest@localhost/
-LOG_PATH=./tmp/logs/all.log
+LOG_PATH=./tmp/logs/{{cookiecutter.app_name}}.log
 DATA_PATH=./tmp

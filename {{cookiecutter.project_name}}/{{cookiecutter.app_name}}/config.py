@@ -7,7 +7,7 @@ from marshmallow import fields, validate
 from sqlalchemy.pool import QueuePool
 
 ENV = os.getenv("FLASK_ENV")
-DEBUG = ENV == "development"
+# DEBUG = ENV == "development"
 SECRET_KEY = os.getenv("SECRET_KEY")
 PROPAGATE_EXCEPTIONS = True
 SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
@@ -38,7 +38,7 @@ JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
 JWT_TOKEN_LOCATION = ('headers', 'cookies')
 JWT_COOKIE_CSRF_PROTECT = False if os.getenv("JWT_COOKIE_CSRF_PROTECT") == "False" else True
 JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
-JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=120)
+JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", '120')))
 {%- if cookiecutter.use_celery == "yes" %}
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND_URL")

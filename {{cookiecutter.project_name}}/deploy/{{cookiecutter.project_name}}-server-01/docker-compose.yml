@@ -1,42 +1,42 @@
 version: '3'
 services:
-    {{cookiecutter.app_name}}-web:
-        container_name: {{cookiecutter.app_name}}-web
+    {{cookiecutter.app_name}}-be:
+        container_name: {{cookiecutter.app_name}}-be
         image: {{cookiecutter.app_name}}-be:latest
-        build: .
+        build: ./{{cookiecutter.app_name}}-be
         restart: always
         privileged: true
-        command: gunicorn {{cookiecutter.app_name}}.wsgi:app --workers=5 --worker-class gevent -t300 -b 0.0.0.0:5000
+        command: gunicorn {{cookiecutter.app_name}}.wsgi:app --workers=5 --worker-class gevent -t300 -b 0.0.0.0:5002
         networks:
             {{cookiecutter.app_name}}_net:
                 aliases:
-                    - {{cookiecutter.app_name}}-web
+                    - {{cookiecutter.app_name}}-be
         environment:
             - USER_ID=${USER_ID}
         env_file:
             - ./${ENV_FILE_NAME}
         volumes:
-            - ./workspace/logs:/opt/{{cookiecutter.app_name}}/logs
-            - ./workspace/data:/opt/{{cookiecutter.app_name}}/data
+            - ./workspace/flask/logs:/opt/{{cookiecutter.app_name}}/logs
+            - ./workspace/flask/data:/opt/{{cookiecutter.app_name}}/data
     {{cookiecutter.app_name}}-celery:
         container_name: {{cookiecutter.app_name}}-celery
         image: {{cookiecutter.app_name}}-be:latest
-        command: "celery worker -A {{cookiecutter.app_name}}.celery_app:app --loglevel=info --logfile=/opt/{{cookiecutter.app_name}}/logs/celery.log --heartbeat-interval=15"
+        command: "celery worker -A {{cookiecutter.app_name}}.celery_app:app -E --loglevel=info --logfile=/opt/{{cookiecutter.app_name}}/logs/celery-{{cookiecutter.app_name}}.log --heartbeat-interval=15"
         environment:
           - USER_ID=${USER_ID}
-          - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq
-          - CELERY_RESULT_BACKEND_URL=redis://redis
+#          - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq
+#          - CELERY_RESULT_BACKEND_URL=redis://redis
         env_file:
           - ./${ENV_FILE_NAME}
-        depends_on:
-          - rabbitmq
+#        depends_on:
+#          - rabbitmq
         volumes:
           - ./workspace/celery/logs:/opt/{{cookiecutter.app_name}}/logs
           - ./workspace/celery/data:/opt/{{cookiecutter.app_name}}/data
     {{cookiecutter.app_name}}-fe:
         container_name: {{cookiecutter.app_name}}-fe
         image: {{cookiecutter.app_name}}-fe:latest
-        build: ./nginx
+        build: ./{{cookiecutter.app_name}}-fe
         restart: always
 #        user: ${USER_ID}
         networks:
@@ -44,9 +44,9 @@ services:
                 aliases:
                     - {{cookiecutter.app_name}}-fe
         ports:
-            - "80:80"
+            - "8002:80"
         volumes:
-            - "./nginx/default.conf:/etc/nginx/conf.d/default.conf"
+            - "./{{cookiecutter.app_name}}-fe/default.conf:/etc/nginx/conf.d/default.conf"
             - "./workspace/nginx:/var/log/nginx"
 networks:
     {{cookiecutter.app_name}}_net:

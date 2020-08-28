@@ -16,8 +16,8 @@ echo $opt
 if [ "$opt" = "是" ];then
   docker build -t {{cookiecutter.app_name}}-base ./{{cookiecutter.app_name}}_base_image
 fi
-mkdir - p ./workspace/logs
-mkdir - p ./workspace/data
+mkdir - p ./workspace/flask/logs
+mkdir - p ./workspace/flask/data
 mkdir - p ./workspace/celery/logs
 mkdir - p ./workspace/celery/data
 mkdir - p ./workspace/nginx

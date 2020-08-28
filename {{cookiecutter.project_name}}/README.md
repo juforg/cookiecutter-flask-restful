@@ -77,7 +77,7 @@ source ~/.zshrc
 ![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/8/9/1565328268382.png)
 - 启动异步任务
 ![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/8/29/1567073039461.png)
-`worker -A {{cookiecutter.app_name}}.celery_app:app --loglevel=info -B -E -Q CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_OUT,CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_IN,CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_OTHER --logfile=/opt/abi/algo/logs/celery-all.log`
+`worker -A {{cookiecutter.app_name}}.celery_app:app --loglevel=info -B -E -Q CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_OUT,CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_IN,CELERY_ASYNC_QUEUE_ABINBEV_ZIY_FAC_OTHER --logfile=/opt/{{cookiecutter.app_name}}/logs/celery-{{cookiecutter.app_name}}.log`
 - 启动定时任务
 ![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/10/17/1571296058664.png)
 `worker -A {{cookiecutter.app_name}}.celery_app:app --loglevel=info -Q timing_tasks_q -E -c 2`

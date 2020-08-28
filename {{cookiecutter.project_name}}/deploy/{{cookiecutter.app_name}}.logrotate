@@ -1,4 +1,4 @@
-/opt/{{cookiecutter.app_name}}/*/all.log{
+/opt/{{cookiecutter.app_name}}/*/{{cookiecutter.app_name}}.log{
     rotate 5
     daily
     compress

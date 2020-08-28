@@ -41,7 +41,7 @@ def sftp_transfer_callback(x, y):
 
 
 # @retry(tries=4, delay=5)
-def sftp_upload_file(ip, path, server_path, is_dir=False):
+def sftp_upload_file(ip, path, server_path, is_dir=False, is_source_dir=False):
     with pysftp.Connection(host=ip, username=username,
                            private_key=os.path.expanduser('~/.ssh/id_rsa')) as sftp:
         print("Connection succesfully stablished ... ")
@@ -52,7 +52,7 @@ def sftp_upload_file(ip, path, server_path, is_dir=False):
         else:
             parent_path = os.path.dirname(server_path)
             sftp.makedirs(parent_path)
-        if is_dir:
+        if is_source_dir:
             sftp.put_r(localpath=path, remotepath=server_path)
         else:
             sftp.put(localpath=path, remotepath=server_path,
@@ -76,11 +76,11 @@ def get_config_full_base_path(config_base_path):
 
 
 def get_base_image_full_path():
-    return os.path.join(os.getcwd(), '{{cookiecutter.project_name}}_base_image')
+    return os.path.join(os.getcwd(), '{{cookiecutter.app_name}}_base_image')
 
 
 def get_nginx_config_full_base_path(config_base_path):
-    return os.path.join(os.getcwd(), get_config_full_base_path(config_base_path), 'nginx')
+    return os.path.join(os.getcwd(), get_config_full_base_path(config_base_path), 'nginx/')
 
 
 def get_docker_compose_yml_path(config_base_path):
@@ -148,12 +148,12 @@ def build_and_package_be():
 
 def upload():
     sftp_upload_file(server_ip, get_docker_compose_yml_path(config_base_path), remote_path + 'docker-compose.yml')
-    sftp_upload_file(server_ip, get_nginx_config_full_base_path(config_base_path), remote_path + 'nginx', True)
-    sftp_upload_file(server_ip, os.path.join(project_dir, 'deploy/Dockerfile'), remote_path + 'Dockerfile')
     sftp_upload_file(server_ip, get_env_file_full_path(config_base_path, env_file_name), remote_path + env_file_name)
-    sftp_upload_file(server_ip, get_base_image_full_path(), remote_path + '{{cookiecutter.project_name}}_base_image', True)
-    sftp_upload_file(server_ip, be_zip_file_path, remote_path + '{{cookiecutter.app_name}}-be.tar.gz')
-    sftp_upload_file(server_ip, fe_zip_file_path, remote_path + '{{cookiecutter.app_name}}-fe.tar.gz')
+    sftp_upload_file(server_ip, get_base_image_full_path(), remote_path + '{{cookiecutter.app_name}}_base_image', True, True)
+    sftp_upload_file(server_ip, be_zip_file_path, remote_path + '{{cookiecutter.app_name}}-be/{{cookiecutter.app_name}}-be.tar.gz')
+    sftp_upload_file(server_ip, os.path.join(project_dir, 'deploy/Dockerfile'), remote_path + '{{cookiecutter.app_name}}-be/Dockerfile')
+    sftp_upload_file(server_ip, get_nginx_config_full_base_path(config_base_path), remote_path + '{{cookiecutter.app_name}}-fe', True, True)
+    sftp_upload_file(server_ip, fe_zip_file_path, remote_path + '{{cookiecutter.app_name}}-fe/{{cookiecutter.app_name}}-fe.tar.gz')
 
 
 def remote_build():
@@ -161,13 +161,13 @@ def remote_build():
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(server_ip, 22, username, key_filename=os.path.expanduser('~') + '/.ssh/id_rsa')
     if rebuild_base_image:
-        stdin, stdout, stderr = ssh.exec_command('cd ' + base_path + '/{{cookiecutter.project_name}}_base_image; docker build -t {{cookiecutter.app_name}}-base .')
+        stdin, stdout, stderr = ssh.exec_command('cd ' + base_path + '/{{cookiecutter.app_name}}_base_image; docker build -t {{cookiecutter.app_name}}-base .')
         output(stdout)
         output(stderr)
     docker_command = 'cd ' + base_path + '; \
-                            ' + 'ENV_FILE_NAME=' + env_file_name + ' ' + '/usr/bin/docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-be; \
-                            ' + 'ENV_FILE_NAME=' + env_file_name + ' ' + '/usr/bin/docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-fe; \
-                            ' + 'USER_ID=$(id -u) ENV_FILE_NAME=' + env_file_name + ' ' + '/usr/bin/docker-compose up -d ;'
+                            ' + 'USER_ID=$(id -u) ENV_FILE_NAME=' + env_file_name + ' ' + f'{server_config["docker_compose_path"]}/docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-be; \
+                            ' + 'USER_ID=$(id -u) ENV_FILE_NAME=' + env_file_name + ' ' + f'{server_config["docker_compose_path"]}/docker-compose build --build-arg USER_ID=$(id -u) {{cookiecutter.app_name}}-fe; \
+                            ' + 'USER_ID=$(id -u) ENV_FILE_NAME=' + env_file_name + ' ' + f'{server_config["docker_compose_path"]}/docker-compose up -d ;'
     print(docker_command)
     stdin, stdout, stderr = ssh.exec_command(docker_command)
 
@@ -181,10 +181,10 @@ def remote_build():
         "docker exec -uroot {{cookiecutter.app_name}}-be  chown -R app:app /opt/{{cookiecutter.app_name}};")
     output(stdout)
     output(stderr)
-    stdin, stdout, stderr = ssh.exec_command(
-        "docker exec -uroot {{cookiecutter.app_name}}-timing  chown -R app:app /opt/{{cookiecutter.app_name}};")
-    output(stdout)
-    output(stderr)
+    # stdin, stdout, stderr = ssh.exec_command(
+    #     "docker exec -uroot {{cookiecutter.app_name}}-timing  chown -R app:app /opt/{{cookiecutter.app_name}};")
+    # output(stdout)
+    # output(stderr)
     pass
 
 
@@ -220,17 +220,18 @@ def clean_other():
 
 
 def package_files():
-    os.system('mkdir -p ' + os.path.join({{cookiecutter.app_name}}_package_dic_path, 'nginx'))
+    os.system('mkdir -p ' + os.path.join({{cookiecutter.app_name}}_package_dic_path, '{{cookiecutter.app_name}}-fe'))
+    os.system('mkdir -p ' + os.path.join({{cookiecutter.app_name}}_package_dic_path, '{{cookiecutter.app_name}}-be'))
     os.system('mkdir -p ' + os.path.join({{cookiecutter.app_name}}_package_dic_path, 'sql'))
-    cp_cmd = 'cp -R ' + be_zip_file_path + ' ' + {{cookiecutter.app_name}}_package_dic_path
+    cp_cmd = 'cp -R ' + be_zip_file_path + ' ' + os.path.join({{cookiecutter.app_name}}_package_dic_path, '{{cookiecutter.app_name}}-be')
     os.system(cp_cmd)
-    cp_cmd = 'cp -R ' + fe_zip_file_path + ' ' + os.path.join({{cookiecutter.app_name}}_package_dic_path, 'nginx')
+    cp_cmd = 'cp' + fe_zip_file_path + ' ' + os.path.join({{cookiecutter.app_name}}_package_dic_path, '{{cookiecutter.app_name}}-fe')
     os.system(cp_cmd)
     cp_cmd = 'cp -R ' + get_docker_compose_yml_path(config_base_path) + ' ' + {{cookiecutter.app_name}}_package_dic_path
     os.system(cp_cmd)
-    cp_cmd = 'cp -R ' + get_nginx_config_full_base_path(config_base_path) + ' ' + {{cookiecutter.app_name}}_package_dic_path
+    cp_cmd = 'cp -R ' + get_nginx_config_full_base_path(config_base_path) + ' ' + os.path.join({{cookiecutter.app_name}}_package_dic_path, '{{cookiecutter.app_name}}-fe')
     os.system(cp_cmd)
-    cp_cmd = 'cp -R ' + os.path.join(project_dir, 'deploy/Dockerfile') + ' ' + {{cookiecutter.app_name}}_package_dic_path
+    cp_cmd = 'cp ' + os.path.join(project_dir, 'deploy/Dockerfile') + ' ' + os.path.join({{cookiecutter.app_name}}_package_dic_path, '{{cookiecutter.app_name}}-be')
     os.system(cp_cmd)
     cp_cmd = 'cp -R ' + get_env_file_full_path(config_base_path, env_file_name) + ' ' + {{cookiecutter.app_name}}_package_dic_path
     os.system(cp_cmd)

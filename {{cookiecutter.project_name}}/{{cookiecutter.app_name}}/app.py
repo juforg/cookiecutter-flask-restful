@@ -42,10 +42,10 @@ def init_logger():
         dict_conf = yaml.load(f_conf, Loader=yaml.FullLoader)
     log_path = os.getenv("LOG_PATH")
     if log_path:
-        log_path2 = log_path.replace('{{cookiecutter.app_name}}.log', 'all.log')
-        dict_conf["handlers"]["all_file_handler"]["filename"] = log_path2
+        # log_path2 = log_path.replace('{{cookiecutter.app_name}}.log', '{{cookiecutter.app_name}}.log')
+        dict_conf["handlers"]["all_file_handler"]["filename"] = log_path
     else:
-        dict_conf["handlers"]["all_file_handler"]["filename"] = "./all.log"
+        dict_conf["handlers"]["all_file_handler"]["filename"] = "./tmp/logs/{{cookiecutter.app_name}}.log"
     logging.config.dictConfig(dict_conf)
 
 

@@ -45,13 +45,15 @@ RUN apt-get update && \
 ADD requirements.txt /requirements.txt
 RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple \
     && pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple \
+    {%- if cookiecutter.use_LightGBM == "yes" %}
     && pip install pystan -i https://mirrors.aliyun.com/pypi/simple \
+    {%- endif %}
     && pip install gunicorn -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # clean
 RUN apt-get clean -y && \
     apt-get autoclean -y && \
-    apt-get remove -y wget make autoconf g++ unzip && \
+    apt-get remove -y  g++ && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* /var/lib/log/* /tmp/* /var/tmp/*
 
