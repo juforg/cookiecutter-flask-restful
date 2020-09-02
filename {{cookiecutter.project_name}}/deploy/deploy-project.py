@@ -131,6 +131,7 @@ def build_and_package_be():
     all_files = []
     all_files.extend(dirs)
     all_files.extend(files)
+    # all_files.append('alg')  # 把加密进来包一起带上
     print(all_files)
     for dir in dirs:
         os.system('cp -r ' + os.path.join(be_server_src_path, dir) + ' ' + be_bin_path)
@@ -299,7 +300,7 @@ if __name__ == '__main__':
 
         root_bin_path = os.path.join(dist_path, '{{cookiecutter.app_name}}')
         be_bin_path = os.path.join(root_bin_path, '{{cookiecutter.app_name}}-be')
-        algo_bin_path = os.path.join(be_bin_path, '{{cookiecutter.app_name}}')
+        algo_bin_path = os.path.join(be_bin_path, 'alg')
         os.system('mkdir -p ' + be_bin_path)
         fe_bin_path = os.path.join(root_bin_path, '{{cookiecutter.app_name}}-fe')
         os.system('mkdir -p ' + fe_bin_path)

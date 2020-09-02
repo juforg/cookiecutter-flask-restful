@@ -203,7 +203,7 @@ def expired_token_callback():
 # 无效令牌
 @jwt.invalid_token_loader
 def invalid_token_callback(error):  # we have to keep the argument here, since it's passed in by the caller internally
-    return return_code.INVALID_TOKEN.d, 200
+    return return_code.INVALID_TOKEN.set_data(error).d, 200
 
 @blueprint.before_app_first_request
 def register_views():

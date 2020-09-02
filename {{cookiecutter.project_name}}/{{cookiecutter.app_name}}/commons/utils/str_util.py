@@ -61,3 +61,21 @@ def to_pascal_case(text):
         res = res + i[0].upper() + i[1:]
         j += 1
     return res
+
+
+def camel_to_underline(camel_format):
+    """
+    驼峰命名格式转下划线命名格式
+    :param camel_format:
+    :return:
+    """
+    underline_format = ''
+    is_first = True
+    if isinstance(camel_format, str):
+        for _s_ in camel_format:
+            if is_first:
+                underline_format += _s_ if not _s_.isupper() else _s_.lower()
+                is_first = False
+            else:
+                underline_format += _s_ if not _s_.isupper() else '_' + _s_.lower()
+    return underline_format
