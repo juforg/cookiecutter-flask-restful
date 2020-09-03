@@ -10,7 +10,9 @@ from {{cookiecutter.app_name}}.models.{{title_lower}} import {{ title_lower | to
 from {{cookiecutter.app_name}}.api.schemas.{{title_lower}} import {{ title_lower | to_pascal_case }}Schema
 from {{cookiecutter.app_name}}.extensions import db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
+{%- if cookiecutter.use_excel == "yes" %}
 import flask_excel as excel
+{%- endif %}
 
 logger = logging.getLogger(__name__)
 
@@ -187,22 +189,12 @@ class {{title_lower | to_pascal_case }}List(Resource):
         return return_code.SUCCESS.d, 200
 
 
-@{{title_lower}}_bp.route('/{{title_lower}}s/export', methods=['POST'])
-@jwt_required
-def export_excel():
-    query_sets = {{title_lower | to_pascal_case }}.query.all()
-    column_names = [{% for col in columns%}'{{col.name }}', {% endfor %}]
-    colnames = [{% for col in columns%}'{{col.comment }}', {% endfor %}]
-    return excel.make_response_from_query_sets(query_sets, column_names, file_type="xlsx",
-                                               file_name='{{tb_obj.comment}}', sheet_name='{{tb_obj.commen}}', colnames=colnames)
-
-
 @{{title_lower}}_bp.route('/{{title_lower}}s/list', methods=['POST'])
 @jwt_required
 def query_list():
     id = request.json.get('id', None)
     date_type = request.json.get('dateType', None)
-    sort = request.args.get("sort", None)
+    sort = request.json.get("sort", None)
     query = {{title_lower | to_pascal_case }}.query. \
         with_entities([{% for col in columns%}{{title_lower | to_pascal_case }}.{{col.name |lower}}, {% endfor %}])
     if id:
@@ -214,6 +206,17 @@ def query_list():
     schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
     data = schema.dump(query.all())
     return return_code.SUCCESS.set_data(data).d, 200
+
+
+{%- if cookiecutter.use_excel == "yes" %}
+@{{title_lower}}_bp.route('/{{title_lower}}s/export', methods=['POST'])
+@jwt_required
+def export_excel():
+    query_sets = {{title_lower | to_pascal_case }}.query.all()
+    column_names = [{% for col in columns%}'{{col.name }}', {% endfor %}]
+    colnames = [{% for col in columns%}'{{col.comment }}', {% endfor %}]
+    return excel.make_response_from_query_sets(query_sets, column_names, file_type="xlsx",
+                                               file_name='{{tb_obj.comment}}', sheet_name='{{tb_obj.commen}}', colnames=colnames)
 
 
 @{{title_lower}}_bp.route('/{{title_lower}}s/import', methods=['POST'])
@@ -233,3 +236,4 @@ def import_excel():
         logger.exception(e)
         return return_code.UNKNOWN_ERROR.set_data(e.args).d
     return return_code.SUCCESS.d, 200
+{%- endif %}

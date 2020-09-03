@@ -18,6 +18,31 @@ Features
 * Unit tests using pytest and factoryboy
 * Configuration using environment variables
 * OpenAPI json file and swagger UI
+* 支持全局自定义错误码
+* 支持代码自动生成（api和数据库model）
+* 模板下载接口示例
+* marshmallow自定义数字类型field，防止空字符串报错
+* 数据库批量操作工具类 db_util 支持 全量插入，全量保存，增量保存
+* 字符工具类 str_util 判断数字，驼峰转换
+* flask 日志扩展为 queue handler 提升性能
+* 增加字典功能及字典翻译类
+* 增加异步线程备份df2cvs工具类 backup_util
+* dictlist分组工具类
+* 读取ini配置文件到dict工具类
+* 生成项目时支持选项
+    * 是否使用celery
+    * 是否使用excel，如使用则生成的模板会自带excel导入导出功能
+    * 是否使用oracle
+    * 是否使用sqlserver
+    * 是否使用LightGBM，如使用则baseimage中自带LightGBM配置
+* 部署
+    * 提供本地自动部署脚本，可直接上传服务或只在本地打包，可打包前后端，可加密代码
+    * 提供docker-baseimage，提示部署效率
+    * 提供默认nginx配置，支持前后端分离
+    * 提供打包部署在server端一键启动sh
+    * 提供默认docker-compose.yml文件，方便快速部署
+
+
 
 Used packages :
 
