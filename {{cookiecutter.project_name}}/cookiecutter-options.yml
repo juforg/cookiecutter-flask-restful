@@ -11,4 +11,5 @@ default_context:
     use_mssql: "{{ cookiecutter.use_mssql }}"
     use_oracle: "{{ cookiecutter.use_oracle }}"
     use_ml: "{{ cookiecutter.use_ml }}"
+    use_or: "{{ cookiecutter.use_or }}"
     wsgi_server: "{{ cookiecutter.wsgi_server }}"
