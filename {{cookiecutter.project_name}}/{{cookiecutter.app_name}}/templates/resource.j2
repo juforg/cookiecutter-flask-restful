@@ -1,3 +1,4 @@
+{% autoescape false %}
 import logging
 from flask import request, Blueprint
 from flask_restful import Resource
@@ -237,3 +238,5 @@ def import_excel():
         return return_code.UNKNOWN_ERROR.set_data(e.args).d
     return return_code.SUCCESS.d, 200
 {%- endif %}
+
+{% endautoescape %}

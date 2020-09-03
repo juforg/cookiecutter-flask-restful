@@ -1,3 +1,4 @@
+{% autoescape false %}
 from marshmallow import fields, validate
 from {{cookiecutter.app_name}}.models.{{title_lower }} import {{title_lower | to_pascal_case }}
 from {{cookiecutter.app_name}}.extensions import ma, db
@@ -16,3 +17,5 @@ class {{title_lower | to_pascal_case }}Schema(ma.SQLAlchemySchema):
         model = {{title_lower | to_pascal_case }}
         load_instance = True
         sqla_session = db.session
+
+{% endautoescape %}
