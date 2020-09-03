@@ -9,4 +9,6 @@ default_context:
     use_redis: "{{ cookiecutter.use_redis }}"
     use_LightGBM: "{{ cookiecutter.use_LightGBM }}"
     use_mssql: "{{ cookiecutter.use_mssql }}"
+    use_oracle: "{{ cookiecutter.use_oracle }}"
+    use_ml: "{{ cookiecutter.use_ml }}"
     wsgi_server: "{{ cookiecutter.wsgi_server }}"
