@@ -9,7 +9,7 @@ DEFAULT_PAGE_NUMBER = 1
 
 def paginate(query, schema):
     page = request.args.get('page', DEFAULT_PAGE_NUMBER)
-    per_page = request.args.get('page_size', DEFAULT_PAGE_SIZE)
+    per_page = request.args.get('pageSize', DEFAULT_PAGE_SIZE)
     sort = request.args.get("sort", None)
     if sort:
         query = query.order_by(text(sort))
@@ -17,13 +17,13 @@ def paginate(query, schema):
     next = url_for(
         request.endpoint,
         page=page_obj.next_num if page_obj.has_next else page_obj.page,
-        per_page=per_page,
+        pageSize=per_page,
         **request.view_args
     )
     prev = url_for(
         request.endpoint,
         page=page_obj.prev_num if page_obj.has_prev else page_obj.page,
-        per_page=per_page,
+        pageSize=per_page,
         **request.view_args
     )
 
@@ -32,5 +32,5 @@ def paginate(query, schema):
         'pages': page_obj.pages,
         'next': next,
         'prev': prev,
-        'results': schema.dump(page_obj.items).data
+        'items': schema.dump(page_obj.items)
     }
