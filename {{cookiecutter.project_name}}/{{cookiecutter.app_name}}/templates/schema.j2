@@ -1,20 +1,20 @@
 {% autoescape false %}
 from marshmallow import fields, validate
-from {{cookiecutter.app_name}}.models.{{title_lower }} import {{title_lower | to_pascal_case }}
+from {{cookiecutter.app_name}}.models.{\{title_lower }} import {\{title_lower | to_pascal_case }}
 from {{cookiecutter.app_name}}.extensions import ma, db
 
 
-class {{title_lower | to_pascal_case }}Schema(ma.SQLAlchemySchema):
+class {\{title_lower | to_pascal_case }}Schema(ma.SQLAlchemySchema):
 {% for col in columns%}
-    {{col.name }} = fields.{{col.type.__class__.__name__ | dbtype_transfer}}(
-        required={{False if col.nullable == True or col.autoincrement else True }},
-        allow_none={{False if col.nullable == False else True }},
+    {\{col.name }} = fields.{\{col.type.__class__.__name__ | dbtype_transfer}}(
+        required={\{False if col.nullable == True or col.autoincrement else True }},
+        allow_none={\{False if col.nullable == False else True }},
         {% if col.type not in str_types%}# {% endif %}validate=[validate.Length(min=1)],
-        error_messages={'required': '{{col.name }}不能为空'},
-        data_key='{{col.name }}')
+        error_messages={'required': '{\{col.name }}不能为空'},
+        data_key='{\{col.name }}')
 {% endfor %}
     class Meta:
-        model = {{title_lower | to_pascal_case }}
+        model = {\{title_lower | to_pascal_case }}
         load_instance = True
         sqla_session = db.session
 
