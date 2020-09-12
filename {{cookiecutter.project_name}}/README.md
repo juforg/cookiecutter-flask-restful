@@ -62,6 +62,7 @@ source ~/.zshrc
 |PuLP|混合整数规划|2.0|
 |celery|异步任务/定时任务框架|4.3|
 |flask-redis|redis集成|可被当作分布式锁|
+|Flask-Excel|excel集成|导入导出及操作excel|
 |marshmallow|序列化反序列化包|3|
 |pandas|结构化数据的分析工具集||
 |sqlacodegen|生成sqlalchemy的model代码||

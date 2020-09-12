@@ -196,7 +196,7 @@ def query_list():
     date_type = request.json.get('dateType', None)
     sort = request.json.get("sort", None)
     query = {\{title_lower | to_pascal_case }}.query. \
-        with_entities([{\% for col in columns%}{\{title_lower | to_pascal_case }}.{\{col.name |lower}}, {\% endfor %}])
+        with_entities({\% for col in columns%}{\{title_lower | to_pascal_case }}.{\{col.name |lower}}, {\% endfor %})
     if id:
         query = query.filter_by(id=id)
     if date_type:

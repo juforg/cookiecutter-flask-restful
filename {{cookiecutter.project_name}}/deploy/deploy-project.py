@@ -110,7 +110,7 @@ def build_and_package_fe():
     fe_mv_cmd = 'mv ' + fe_src_path + '/dist/* ' + fe_bin_path
     print(fe_mv_cmd)
     os.system(fe_mv_cmd)
-    fe_tar_cmd = 'cd ' + fe_bin_path + '; tar -zcvf ../../{{cookiecutter.app_name}}-fe.tar.gz static index.html favicon.ico docs'
+    fe_tar_cmd = 'cd ' + fe_bin_path + '; tar -zcvf ../../{{cookiecutter.app_name}}-fe.tar.gz ./*'
     print(fe_tar_cmd)
     os.system(fe_tar_cmd)
 

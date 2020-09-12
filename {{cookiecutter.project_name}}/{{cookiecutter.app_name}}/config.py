@@ -44,6 +44,7 @@ JWT_COOKIE_CSRF_PROTECT = False if os.getenv("JWT_COOKIE_CSRF_PROTECT") == "Fals
 JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
 JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", '120')))
 {%- if cookiecutter.use_celery == "yes" %}
+# ------------------------------------------------CELERY START-----------------
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND_URL")
 CELERY_TIMEZONE = 'Asia/Shanghai'
@@ -74,7 +75,11 @@ CELERY_RESULT_BACKEND_TRANSPORT_OPTIONS = {
     'visibility_timeout': 60 * 30,
     'health_check_interval': 20
 }
+# ------------------------------------------------CELERY END-----------------
 {%- endif %}
+
+REDIS_URL = os.getenv('REDIS_URL')
+
 LOG_PATH = os.getenv("LOG_PATH")
 LOG_LEVEL = os.getenv("LOG_LEVEL")
 DATA_PATH = os.getenv("DATA_PATH")

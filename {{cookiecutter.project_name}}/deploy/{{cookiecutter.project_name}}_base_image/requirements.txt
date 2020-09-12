@@ -42,6 +42,6 @@ networkx==2.3
 scikit-learn==0.21.3
 {%- endif %}
 {%- if cookiecutter.use_or == "yes" %}
-mip==1.4.2
+mip==1.9.0
 PuLP==2.0
 {%- endif %}

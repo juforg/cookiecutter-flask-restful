@@ -8,6 +8,12 @@
 # note that celery will require a running broker and result backend
 FROM python:3.7.4-slim-stretch
 
+RUN echo " " > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian/ stretch main non-free contrib" >> /etc/apt/sources.list &&\
+    echo "deb http://mirrors.aliyun.com/debian-security stretch/updates main" >> /etc/apt/sources.list &&\
+    echo "deb http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib" >> /etc/apt/sources.list &&\
+    echo "deb http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib" >> /etc/apt/sources.list
+
 RUN mkdir /code
 WORKDIR /code
 

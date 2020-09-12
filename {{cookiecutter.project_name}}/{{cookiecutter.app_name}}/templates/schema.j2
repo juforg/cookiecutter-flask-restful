@@ -9,8 +9,9 @@ class {\{title_lower | to_pascal_case }}Schema(ma.SQLAlchemySchema):
         required={\{False if col.nullable == True or col.autoincrement else True }},
         allow_none={\{False if col.nullable == False else True }},
         {\% if col.type not in str_types%}# {\% endif %}validate=[validate.Length(min=1)],
+        {\% if col.type in datetime_types%}format='%Y-%m-%d %H:%M:%S', {\% endif %}
         error_messages={'required': '{\{col.name }}不能为空'},
-        data_key='{\{col.name }}')
+        data_key='{\{col.name  | to_camel_case}}')
 {\% endfor %}
     class Meta:
         model = {\{title_lower | to_pascal_case }}

@@ -18,7 +18,7 @@ import logging
 
 from jinja2 import Environment, PackageLoader
 from pick import pick
-from sqlalchemy import VARCHAR, CHAR
+from sqlalchemy import VARCHAR, CHAR, TIMESTAMP, DATETIME
 
 from {{cookiecutter.app_name}}.commons.db_util import dbtype_transfer
 from {{cookiecutter.app_name}}.commons.utils.str_util import to_camel_case, to_pascal_case
@@ -99,6 +99,7 @@ def init_env_variable(tb_name: str, tb_obj):
     var_dict['resource_path'] = resource_path
     var_dict['schema_path'] = schema_path
     var_dict['str_types'] = [VARCHAR, CHAR]
+    var_dict['datetime_types'] = [TIMESTAMP, DATETIME]
     return var_dict
 
 

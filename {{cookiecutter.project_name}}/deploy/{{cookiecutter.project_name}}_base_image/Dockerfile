@@ -3,6 +3,13 @@ FROM python:3.7.2-slim-stretch
 ENV LD_LIBRARY_PATH="/usr/local/lib;/usr/local/instantclient"
 ENV NLS_LANG="AMERICAN_AMERICA.AL32UTF8"
 {%- endif %}
+
+RUN echo " " > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian/ stretch main non-free contrib" >> /etc/apt/sources.list &&\
+    echo "deb http://mirrors.aliyun.com/debian-security stretch/updates main" >> /etc/apt/sources.list &&\
+    echo "deb http://mirrors.aliyun.com/debian/ stretch-updates main non-free contrib" >> /etc/apt/sources.list &&\
+    echo "deb http://mirrors.aliyun.com/debian/ stretch-backports main non-free contrib" >> /etc/apt/sources.list
+
 {%- if cookiecutter.use_LightGBM == "yes" %}
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
