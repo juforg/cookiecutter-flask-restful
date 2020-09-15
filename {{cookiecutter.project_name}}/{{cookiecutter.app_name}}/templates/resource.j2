@@ -10,9 +10,9 @@ from {{cookiecutter.app_name}}.models.{\{title_lower}} import {\{ title_lower | 
 from {{cookiecutter.app_name}}.api.schemas.{\{title_lower}} import {\{ title_lower | to_pascal_case }}Schema
 from {{cookiecutter.app_name}}.extensions import db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
-{\%- if cookiecutter.use_excel == "yes" %}
+{%- if cookiecutter.use_excel == "yes" %}
 import flask_excel as excel
-{\%- endif %}
+{%- endif %}
 
 logger = logging.getLogger(__name__)
 
@@ -208,7 +208,7 @@ def query_list():
     return return_code.SUCCESS.set_data(data).d, 200
 
 
-{\%- if cookiecutter.use_excel == "yes" %}
+{%- if cookiecutter.use_excel == "yes" %}
 @{\{title_lower}}_bp.route('/{\{title_lower}}s/export', methods=['POST'])
 @jwt_required
 def export_excel():

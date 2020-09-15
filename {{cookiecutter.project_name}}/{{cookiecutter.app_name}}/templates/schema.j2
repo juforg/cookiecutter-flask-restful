@@ -10,7 +10,7 @@ class {\{title_lower | to_pascal_case }}Schema(ma.SQLAlchemySchema):
         allow_none={\{False if col.nullable == False else True }},
         {\% if col.type not in str_types%}# {\% endif %}validate=[validate.Length(min=1)],
         {\% if col.type in datetime_types%}format='%Y-%m-%d %H:%M:%S', {\% endif %}
-        error_messages={'required': '{\{col.name }}不能为空'},
+        error_messages={'required': '{\{col.name | to_camel_case }}{\{col.comment}}不能为空', 'invalid': '{\{col.comment}}不合法'},
         data_key='{\{col.name  | to_camel_case}}')
 {\% endfor %}
     class Meta:

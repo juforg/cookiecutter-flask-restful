@@ -18,7 +18,6 @@ import logging
 
 from jinja2 import Environment, PackageLoader
 from pick import pick
-from sqlalchemy import VARCHAR, CHAR, TIMESTAMP, DATETIME
 
 from {{cookiecutter.app_name}}.commons.db_util import dbtype_transfer
 from {{cookiecutter.app_name}}.commons.utils.str_util import to_camel_case, to_pascal_case
@@ -80,7 +79,7 @@ def generate_model(tb_name: str, tb_obj, db_url):
     logger.info("start generate %s", tb_name)
     if tb_prefix and tb_name.startswith(tb_prefix):
         tb_name = tb_name[len(tb_prefix):]
-    outfile = os.path.abspath(os.path.join(model_path, tb_name))
+    outfile = os.path.abspath(os.path.join(model_path, tb_name.lower()))
     gen_cmd = f'flask-sqlacodegen  {db_url} --tables {tb_name} --outfile "{outfile}.py"  --flask'
     logger.info(gen_cmd)
     os.system(gen_cmd)
@@ -92,14 +91,15 @@ def init_env_variable(tb_name: str, tb_obj):
     var_dict['tb_prefix'] = tb_prefix
     var_dict['tb_with_prefix_name'] = tb_name
     var_dict['tb_name'] = tb_name[len(tb_prefix):] if tb_prefix and tb_name.startswith(tb_prefix) else tb_name
+    var_dict['tb_name'] = var_dict['tb_name'].lower()
     var_dict['title_lower'] = tb_name.lower()
     var_dict['tb_obj'] = tb_obj
     var_dict['columns'] = var_dict.get('tb_obj').columns
     var_dict['model_path'] = model_path
     var_dict['resource_path'] = resource_path
     var_dict['schema_path'] = schema_path
-    var_dict['str_types'] = [VARCHAR, CHAR]
-    var_dict['datetime_types'] = [TIMESTAMP, DATETIME]
+    var_dict['str_types'] = ['VARCHAR', 'CHAR', 'STRING']
+    var_dict['datetime_types'] = ['TIMESTAMP', 'DATETIME']
     return var_dict
 
 

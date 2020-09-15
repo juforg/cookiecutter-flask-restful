@@ -168,22 +168,26 @@ def process_df_to_db(data_df: DataFrame, keys: list = None):
 
 type_dict = {
     "BIGINT": "Int",
+    "BIGINTEGER": "Int",
     "INT": "Int",
     "INTEGER": "Int",
     "SMALLINT": "Int",
     "DECIMAL": "Float",
-    "Float": "Float",
+    "FLOAT": "Float",
     "TIMESTAMP": "DateTime",
     "DATETIME": "DateTime",
     "DATE": "Date",
     "TIME": "Time",
     "TEXT": "String",
+    "STRING": "String",
     "VARCHAR": "String",
     "NVARCHAR": "String",
     "NCHAR": "String",
     "CHAR": "String",
+    "BIT": "Boolean",
+    "BOOLEAN": "Boolean",
 }
 
 
-def dbtype_transfer(obj):
-    return type_dict.get(obj)
+def dbtype_transfer(obj:str):
+    return type_dict.get(obj.upper())
