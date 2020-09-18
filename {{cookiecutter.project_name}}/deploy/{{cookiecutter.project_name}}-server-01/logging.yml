@@ -25,12 +25,12 @@ handlers:
     filename: $LOG_PATH
     encoding: utf8
   queue_listener_handler:
-    class: wms.plugin.QueueListenerHandler
+    class: {{cookiecutter.app_name}}.plugin.QueueListenerHandler
     handlers:
       - cfg://handlers.all_file_handler
     queue: cfg://objects.queue
 loggers:
-  wms:
+  {{cookiecutter.app_name}}:
     level: DEBUG
     handlers: [queue_listener_handler]
     propogate: no
