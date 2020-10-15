@@ -44,7 +44,7 @@ jinjia_env.filters['factoryboy_gen'] = factoryboy_gen
 
 def start():
     try:
-        db_url = current_app.config.get('SQLALCHEMY_DATABASE_URI')
+        db_url = os.getenv('SQLALCHEMY_DATABASE_URI')
         db.reflect()
         choose_title1 = '请选择生成的代码模块:'
         choose_options1 = ['api', 'model']
@@ -100,6 +100,7 @@ def init_env_variable(tb_name: str, tb_obj):
     var_dict['schema_path'] = schema_path
     var_dict['str_types'] = ['VARCHAR', 'CHAR', 'STRING']
     var_dict['datetime_types'] = ['TIMESTAMP', 'DATETIME']
+    var_dict['date_types'] =  ['DATE', 'Date']
     return var_dict
 
 

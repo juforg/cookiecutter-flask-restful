@@ -19,8 +19,9 @@ class {\{title_lower | to_pascal_case }}Schema(ma.SQLAlchemySchema):
     {\{col.name }} = fields.{\{col.type.__class__.__name__ | dbtype_transfer}}(
         required={\{False if col.nullable == True or col.autoincrement else True }},
         allow_none={\{False if col.nullable == False else True }},
-        {\% if col.type not in str_types%}# {\% endif %}validate=[validate.Length(min=1)],
+        {\% if col.type not in str_types or (col.type.__class__.__name__.upper() in str_types and col.nullable == True) %}# {\% endif %}validate=[validate.Length(min=1)],
         {\% if col.type in datetime_types%}format='%Y-%m-%d %H:%M:%S', {\% endif %}
+        {\% if col.type in date_types%}format='%Y-%m-%d', {\% endif %}
         error_messages={'required': '{\{col.name | to_camel_case }}{\{col.comment}}不能为空', 'invalid': '{\{col.comment}}不合法'},
         data_key='{\{col.name  | to_camel_case}}')
 {\% endfor %}

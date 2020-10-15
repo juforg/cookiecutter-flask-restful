@@ -203,9 +203,10 @@ class {\{title_lower | to_pascal_case }}List(Resource):
 @{\{title_lower}}_bp.route('/{\{title_lower}}s/list', methods=['POST'])
 @jwt_required
 def query_list():
-    id = request.json.get('id', None)
-    date_type = request.json.get('dateType', None)
-    sort = request.json.get("sort", None)
+    req = request.json
+    id = req.get('id', None)
+    date_type = req.get('dateType', None)
+    sort = req.get("sort", None)
     query = {\{title_lower | to_pascal_case }}.query. \
         with_entities({\% for col in columns%}{\{title_lower | to_pascal_case }}.{\{col.name |lower}}, {\% endfor %})
     if id:

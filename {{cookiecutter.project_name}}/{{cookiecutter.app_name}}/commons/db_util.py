@@ -79,16 +79,17 @@ class DbUtil:
             print("SQL为空!")
 
     def __del__(self):
-        self.session.close()
+        if self.session:
+            self.session.close()
 
 def full_insert(session, schema_type, data_dict_list, model_type, request_id: str, is_src: bool, **kwargs):
     start = time.time()
     count = session.query(model_type).filter_by(**kwargs).delete()
     logger.info("数据[%s]全量删除,request_id:[%s],kwargs:[%s]完成, 删除:%s,[performance-DD]耗时:[%s]", model_type.__tablename__, request_id, kwargs.__str__(), count, time.time() - start)
-    batch_insert(session, schema_type, data_dict_list, model_type, request_id, is_src, kwargs)
+    batch_insert(session, schema_type, data_dict_list, model_type, request_id, is_src)
 
 
-def batch_insert(session, schema_type, data_dict_list, model_type, request_id: str, is_src: bool, **kwargs):
+def batch_insert(session, schema_type, data_dict_list, model_type, request_id: str, is_src: bool):
     """
     全量更新
     :param session:
@@ -113,7 +114,7 @@ def batch_insert(session, schema_type, data_dict_list, model_type, request_id: s
         session.bulk_insert_mappings(model_type, tmp_data)
         ni += 1
 
-    logger.info("数据全量保存:,request_id:[%s],kwargs:[%s],数据量:[%s],[performance-SD]耗时:[%s]", request_id, kwargs.__str__(), len(data_dict_list), time.time() - start)
+    logger.info("数据全量保存:,request_id:[%s],数据量:[%s],[performance-SD]耗时:[%s]", request_id, len(data_dict_list), time.time() - start)
 
 
 def increment_update(session, schema_type, data_dict_list, is_src: bool, request_id: str, **kwargs):

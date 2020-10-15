@@ -8,8 +8,8 @@ DEFAULT_PAGE_NUMBER = 1
 
 
 def paginate(query, schema):
-    page = request.args.get('page', DEFAULT_PAGE_NUMBER)
-    per_page = request.args.get('pageSize', DEFAULT_PAGE_SIZE)
+    page = int(request.args.get('page', DEFAULT_PAGE_NUMBER))
+    per_page = int(request.args.get('pageSize', DEFAULT_PAGE_SIZE))
     sort = request.args.get("sort", None)
     if sort:
         query = query.order_by(text(sort))

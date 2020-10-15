@@ -22,11 +22,11 @@ SQLALCHEMY_ECHO = True if os.getenv("SQLALCHEMY_ECHO") == "True" else False
 # 默认2小时。该值一定要比数据库wait_timeout小，否则它不起作用
 # SQLALCHEMY_POOL_RECYCLE = 3000
 SQLALCHEMY_ENGINE_OPTIONS = {
-    'pool_size': os.getenv("SQLALCHEMY_POOL_SIZE", 5),
-    'max_overflow': os.getenv("SQLALCHEMY_POOL_OVERFLOW", 10),
+    'pool_size': int(os.getenv("SQLALCHEMY_POOL_SIZE", 5)),
+    'max_overflow': int(os.getenv("SQLALCHEMY_POOL_OVERFLOW", 10)),
     'echo_pool': True if os.getenv("SQLALCHEMY_ECHO_POOL") == "True" else False,
     'pool_recycle': 60 * 5,
-    'pool_timeout': os.getenv("SQLALCHEMY_POOL_TIMEOUT", 20),
+    'pool_timeout': int(os.getenv("SQLALCHEMY_POOL_TIMEOUT", 20)),
     'pool_pre_ping': True,   # 测试是否可用
     'pool_use_lifo': True,   # 越老的越容易被回收，一定要跟ping 配合，否则老的极易被回收造成连接不可用
     'poolclass': QueuePool,
@@ -55,7 +55,8 @@ CELERY_RESULT_SERIALIZER = 'json'  # 读取任务结果一般性能要求不高�
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'pickle']  # 指定接收的内容类型
 # C_FORCE_ROOT = 'true'  # 允许root用户启动celery
 # CELERYD_CONCURRENCY = 1  # 并发只有一个进程消费
-CELERYD_MAX_TASKS_PER_CHILD = 10
+# CELERYD_PREFETCH_MULTIPLIER = 1
+CELERYD_MAX_TASKS_PER_CHILD = 10        # 每个worker最多执行万10个任务就会被销毁，可防止内存泄露
 CELERY_TASK_RESULT_EXPIRES = 60 * 10  # 任务结果过期时间
 CELERYD_TASK_TIME_LIMIT = 60 * 60 * 2  # 任务超时时间
 CELERYD_HIJACK_ROOT_LOGGER = True  # ：默认true，先前所有的logger的配置都会失效，可以通过设置false禁用定制自己的日志处理程序；
