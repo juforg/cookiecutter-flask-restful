@@ -4,7 +4,8 @@ Use env var to override
 """
 import os, datetime
 from marshmallow import fields, validate
-from sqlalchemy.pool import QueuePool
+# from sqlalchemy.pool import QueuePool
+from sqlalchemy.pool import NullPool
 
 ENV = os.getenv("FLASK_ENV")
 # DEBUG = ENV == "development"
@@ -29,7 +30,7 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     'pool_timeout': int(os.getenv("SQLALCHEMY_POOL_TIMEOUT", 20)),
     'pool_pre_ping': True,   # 测试是否可用
     'pool_use_lifo': True,   # 越老的越容易被回收，一定要跟ping 配合，否则老的极易被回收造成连接不可用
-    'poolclass': QueuePool,
+    'poolclass': NullPool,  # flask 应用可以设QueuePool，celery应用可能不用池
     'isolation_level': 'AUTOCOMMIT'
 }
 JWT_SECRET_KEY = SECRET_KEY

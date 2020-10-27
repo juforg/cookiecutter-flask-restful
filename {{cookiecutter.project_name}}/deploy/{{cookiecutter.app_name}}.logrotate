@@ -8,5 +8,5 @@
     nocopytruncate
     noolddir
     dateext
-    create 777 root_admin root_admin
+    create 777 root root
 }
