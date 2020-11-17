@@ -18,6 +18,7 @@ from faker import Faker
 
 def factoryboy_gen(text):
     fake = Faker(locale='zh_CN')
+    text = text.upper()
     if text in ["BIGINT", "INT", "INTEGER"]:
         return fake.pyint(min_value=0, max_value=9999, step=1)
     elif text in ["SMALLINT"]:

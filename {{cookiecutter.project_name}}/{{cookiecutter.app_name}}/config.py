@@ -4,8 +4,7 @@ Use env var to override
 """
 import os, datetime
 from marshmallow import fields, validate
-# from sqlalchemy.pool import QueuePool
-from sqlalchemy.pool import NullPool
+from sqlalchemy.pool import QueuePool
 
 ENV = os.getenv("FLASK_ENV")
 # DEBUG = ENV == "development"
@@ -23,15 +22,16 @@ SQLALCHEMY_ECHO = True if os.getenv("SQLALCHEMY_ECHO") == "True" else False
 # 默认2小时。该值一定要比数据库wait_timeout小，否则它不起作用
 # SQLALCHEMY_POOL_RECYCLE = 3000
 SQLALCHEMY_ENGINE_OPTIONS = {
-    'pool_size': int(os.getenv("SQLALCHEMY_POOL_SIZE", 5)),
-    'max_overflow': int(os.getenv("SQLALCHEMY_POOL_OVERFLOW", 10)),
+    'pool_size': int(os.getenv("SQLALCHEMY_POOL_SIZE", 0)),
+    'max_overflow': int(os.getenv("SQLALCHEMY_POOL_OVERFLOW", 2)),
     'echo_pool': True if os.getenv("SQLALCHEMY_ECHO_POOL") == "True" else False,
     'pool_recycle': 60 * 5,
     'pool_timeout': int(os.getenv("SQLALCHEMY_POOL_TIMEOUT", 20)),
     'pool_pre_ping': True,   # 测试是否可用
-    'pool_use_lifo': True,   # 越老的越容易被回收，一定要跟ping 配合，否则老的极易被回收造成连接不可用
-    'poolclass': NullPool,  # flask 应用可以设QueuePool，celery应用可能不用池
-    'isolation_level': 'AUTOCOMMIT'
+    'pool_use_lifo': False,   # 越老的越容易被回收，一定要跟ping 配合，否则老的极易被回收造成连接不可用
+    'poolclass': QueuePool,  # flask 应用可以设QueuePool，celery应用可能不用池
+    'isolation_level': 'AUTOCOMMIT',
+    'connect_args': {'ssl': {'ca': None}}
 }
 JWT_SECRET_KEY = SECRET_KEY
 JWT_BLACKLIST_ENABLED = False

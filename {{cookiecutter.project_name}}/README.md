@@ -88,8 +88,8 @@ source ~/.zshrc
     - `{{cookiecutter.app_name}} run`
 
 - 生成代码
-![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/10/19/1571492916689.png)
 ![generate_model](https://i.loli.net/2020/08/23/tcF34CwQox96Vkz.png)
+![](http://wntc.oss-cn-shanghai.aliyuncs.com/2019/10/19/1571492916689.png)
 
 - 启动flower监控celery
 ![](https://i.loli.net/2019/12/18/GfBqLFyVhlPeco4.png)

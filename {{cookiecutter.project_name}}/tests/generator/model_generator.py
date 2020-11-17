@@ -29,9 +29,13 @@ from tests.generator.cust_filter import factoryboy_gen
 logger = logging.getLogger(__name__)
 
 model_path = os.path.join(os.path.dirname(__file__), "../..", '{{cookiecutter.app_name}}', "models")
+if not os.path.exists(model_path): os.makedirs(model_path)
 resource_path = os.path.join(os.path.dirname(__file__), "../..", '{{cookiecutter.app_name}}', "api", 'resources')
+if not os.path.exists(resource_path): os.makedirs(resource_path)
 schema_path = os.path.join(os.path.dirname(__file__), "../..", '{{cookiecutter.app_name}}', "api", 'schemas')
+if not os.path.exists(schema_path): os.makedirs(schema_path)
 tmp_path = os.path.join(os.path.dirname(__file__), "../..", 'tmp', 'api')
+if not os.path.exists(tmp_path): os.makedirs(tmp_path)
 tb_prefix = ''
 jinjia_env = Environment(
     loader=PackageLoader('{{cookiecutter.app_name}}', 'templates'),

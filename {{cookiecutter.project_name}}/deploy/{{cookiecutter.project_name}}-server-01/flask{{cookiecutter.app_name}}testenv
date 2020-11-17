@@ -4,8 +4,8 @@ FLASK_RUN_PORT=5000
 SECRET_KEY={{cookiecutter.app_name}}key
 DATABASE_URI=mysql+pymysql://root:123456@127.0.0.1:3306/{{cookiecutter.app_name}}?charset=utf8mb4
 SQLALCHEMY_ECHO=False
-CELERY_BROKER_URL=redis://:123456@localhost/1
-CELERY_RESULT_BACKEND_URL=redis://:123456@localhost/1
+CELERY_BROKER_URL=redis://:123456@localhost/1?ssl_cert_reqs=CERT_NONE
+CELERY_RESULT_BACKEND_URL=redis://:123456@localhost/1?ssl_cert_reqs=CERT_NONE
 HTTP_TIMEOUT=10
 LOG_PATH=/opt/{{cookiecutter.app_name}}/logs/{{cookiecutter.app_name}}.log
 DATA_PATH=/opt/{{cookiecutter.app_name}}/data
