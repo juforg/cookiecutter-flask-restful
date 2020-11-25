@@ -24,14 +24,14 @@ SQLALCHEMY_ECHO = True if os.getenv("SQLALCHEMY_ECHO") == "True" else False
 SQLALCHEMY_ENGINE_OPTIONS = {
     'pool_size': int(os.getenv("SQLALCHEMY_POOL_SIZE", 0)),
     'max_overflow': int(os.getenv("SQLALCHEMY_POOL_OVERFLOW", 2)),
-    'echo_pool': True if os.getenv("SQLALCHEMY_ECHO_POOL") == "True" else False,
+    'echo_pool': 'debug' if os.getenv("SQLALCHEMY_ECHO_POOL") == "True" else False,
     'pool_recycle': 60 * 5,
     'pool_timeout': int(os.getenv("SQLALCHEMY_POOL_TIMEOUT", 20)),
     'pool_pre_ping': True,   # 测试是否可用
     'pool_use_lifo': False,   # 越老的越容易被回收，一定要跟ping 配合，否则老的极易被回收造成连接不可用
     'poolclass': QueuePool,  # flask 应用可以设QueuePool，celery应用可能不用池
     'isolation_level': 'AUTOCOMMIT',
-    'connect_args': {'ssl': {'ca': None}}
+    'connect_args': {'ssl': {'ca': None}}  #开启ssl连接的数据库配置
 }
 JWT_SECRET_KEY = SECRET_KEY
 JWT_BLACKLIST_ENABLED = False
