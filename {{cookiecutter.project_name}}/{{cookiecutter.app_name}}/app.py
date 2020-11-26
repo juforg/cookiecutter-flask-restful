@@ -94,9 +94,9 @@ def register_blueprints(app):
 def init_celery(app=None):
     app = app or create_app()
     celery.conf.BROKER_URL = app.config['CELERY_BROKER_URL']
-    celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']
-    # celery.conf.CELERYBEAT_SCHEDULE = {
-    #     'prepare_data_task': {
+    # celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']
+    # celery.conf.beat_schedule = {
+    #     'dummy_task': {
     #         'task': '{{cookiecutter.app_name}}.tasks.example.dummy_task',
     #         'schedule': crontab(minute=10, hour=2)
     #     }
