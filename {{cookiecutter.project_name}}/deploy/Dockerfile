@@ -20,10 +20,10 @@ RUN mkdir -p /opt/{{cookiecutter.app_name}}/code \
 WORKDIR /opt/{{cookiecutter.app_name}}/code
 
 ADD {{cookiecutter.app_name}}-be.tar.gz /opt/{{cookiecutter.app_name}}/code/
-RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple \
+RUN pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple \
     && pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple \
     && pip install -e .\
-    && pip install gunicorn -i https://pypi.tuna.tsinghua.edu.cn/simple
+    && pip install gunicorn -i https://mirrors.aliyun.com/pypi/simple
 
 RUN pip install -e .
 
