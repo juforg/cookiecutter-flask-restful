@@ -17,8 +17,8 @@ from sqlalchemy import text
 
 from {{cookiecutter.app_name}}.commons import db_util
 from {{cookiecutter.app_name}}.commons.constants import return_code
-from {{cookiecutter.app_name}}.models.{\{title_lower}} import {\{ title_lower | to_pascal_case }}
-from {{cookiecutter.app_name}}.api.schemas.{\{title_lower}} import {\{ title_lower | to_pascal_case }}Schema
+from {{cookiecutter.app_name}}.models.{{title_lower}} import {{ title_lower | to_pascal_case }}
+from {{cookiecutter.app_name}}.api.schemas.{{title_lower}} import {{ title_lower | to_pascal_case }}Schema
 from {{cookiecutter.app_name}}.extensions import db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
 {%- if cookiecutter.use_excel == "yes" %}
@@ -27,11 +27,11 @@ import flask_excel as excel
 
 logger = logging.getLogger(__name__)
 
-{\{title_lower}}_bp = Blueprint('{\{title_lower}}', __name__, url_prefix='/api/v1')
+{{title_lower}}_bp = Blueprint('{{title_lower}}', __name__, url_prefix='/api/v1')
 
 
-class {\{title_lower | to_pascal_case }}Resource(Resource):
-    """{\{tb_obj.comment}} resource
+class {{title_lower | to_pascal_case }}Resource(Resource):
+    """{{tb_obj.comment or tb_obj.info}} resource
 
     ---
     get:
@@ -49,9 +49,9 @@ class {\{title_lower | to_pascal_case }}Resource(Resource):
               schema:
                 type: object
                 properties:
-                  {\{title_lower}}: {\{title_lower | to_pascal_case}}Schema
+                  {{title_lower}}: {{title_lower | to_pascal_case}}Schema
         404:
-          description: {\{title_lower}} does not exists
+          description: {{title_lower}} does not exists
     put:
       tags:
         - api
@@ -64,7 +64,7 @@ class {\{title_lower | to_pascal_case }}Resource(Resource):
         content:
           application/json:
             schema:
-              {\{title_lower | to_pascal_case }}Schema
+              {{title_lower | to_pascal_case }}Schema
       responses:
         200:
           content:
@@ -74,10 +74,10 @@ class {\{title_lower | to_pascal_case }}Resource(Resource):
                 properties:
                   msg:
                     type: string
-                    example: {\{title_lower}} updated
-                  {\{title_lower}}: {\{title_lower | to_pascal_case}}Schema
+                    example: {{title_lower}} updated
+                  {{title_lower}}: {{title_lower | to_pascal_case}}Schema
         404:
-          description: {\{title_lower}} not exists
+          description: {{title_lower}} not exists
     delete:
       tags:
         - api
@@ -95,44 +95,44 @@ class {\{title_lower | to_pascal_case }}Resource(Resource):
                 properties:
                   msg:
                     type: string
-                    example: {\{title_lower}} deleted
+                    example: {{title_lower}} deleted
         404:
-          description: {\{title_lower}} does not exists
+          description: {{title_lower}} does not exists
     """
     method_decorators = [jwt_required]
 
     def get(self, id):
-        schema = {\{title_lower | to_pascal_case }}Schema(unknown=True,)
-        {\{title_lower}} = {\{title_lower | to_pascal_case }}.query.get(id)
-        if {\{title_lower}}:
-            ret = schema.dump({\{title_lower}}.__dict__)
+        schema = {{title_lower | to_pascal_case }}Schema(unknown=True,)
+        {{title_lower}} = {{title_lower | to_pascal_case }}.query.get(id)
+        if {{title_lower}}:
+            ret = schema.dump({{title_lower}}.__dict__)
             return return_code.SUCCESS.set_data(ret).d, 200
         else:
             return return_code.NOT_FOUND.d, 200
 
     def put(self, id):
         session = db.session
-        schema = {\{title_lower | to_pascal_case }}Schema(unknown=True, partial=True)
-        # {\{title_lower}} = {\{title_lower | to_pascal_case }}.query.get(id)
-        {\{title_lower}} = schema.load(request.json)
-        {\{title_lower}}.updated_by = current_user.id
-        session.merge({\{title_lower}})
+        schema = {{title_lower | to_pascal_case }}Schema(unknown=True, partial=True)
+        # {{title_lower}} = {{title_lower | to_pascal_case }}.query.get(id)
+        {{title_lower}} = schema.load(request.json)
+        {{title_lower}}.updated_by = current_user.id
+        session.merge({{title_lower}})
         session.flush()
         return return_code.SUCCESS.d, 200
 
     def post(self, id):
-        schema = {\{title_lower | to_pascal_case }}Schema(unknown=True)
-        {\{title_lower}} = schema.load(request.json)
-        {\{title_lower}}.updated_by = current_user.id
-        db.session.add({\{title_lower}})
+        schema = {{title_lower | to_pascal_case }}Schema(unknown=True)
+        {{title_lower}} = schema.load(request.json)
+        {{title_lower}}.updated_by = current_user.id
+        db.session.add({{title_lower}})
         db.session.flush()
 
         return return_code.SUCCESS.d, 200
 
     def delete(self, id):
-        {\{title_lower}} = {\{title_lower | to_pascal_case }}.query.get(id)
-        if {\{title_lower}}:
-            db.session.delete({\{title_lower}})
+        {{title_lower}} = {{title_lower | to_pascal_case }}.query.get(id)
+        if {{title_lower}}:
+            db.session.delete({{title_lower}})
             db.session.flush()
         else:
             return return_code.NOT_FOUND.d, 200
@@ -140,7 +140,7 @@ class {\{title_lower | to_pascal_case }}Resource(Resource):
         return return_code.SUCCESS.d, 200
 
 
-class {\{title_lower | to_pascal_case }}List(Resource):
+class {{title_lower | to_pascal_case }}List(Resource):
     """Creation and get_all
 
     ---
@@ -159,7 +159,7 @@ class {\{title_lower | to_pascal_case }}List(Resource):
                       results:
                         type: array
                         items:
-                          $ref: '#/components/schemas/{\{title_lower | to_pascal_case }}Schema'
+                          $ref: '#/components/schemas/{{title_lower | to_pascal_case }}Schema'
     post:
       tags:
         - api
@@ -167,7 +167,7 @@ class {\{title_lower | to_pascal_case }}List(Resource):
         content:
           application/json:
             schema:
-              {\{title_lower | to_pascal_case }}Schema
+              {{title_lower | to_pascal_case }}Schema
       responses:
         201:
           content:
@@ -177,70 +177,70 @@ class {\{title_lower | to_pascal_case }}List(Resource):
                 properties:
                   msg:
                     type: string
-                    example: {\{title_lower}} created
-                  {\{title_lower}}: {\{title_lower | to_pascal_case }}Schema
+                    example: {{title_lower}} created
+                  {{title_lower}}: {{title_lower | to_pascal_case }}Schema
     """
     method_decorators = [jwt_required]
 
     def get(self):
-        schema = {\{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
-        query = {\{title_lower | to_pascal_case }}.query
+        schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
+        query = {{title_lower | to_pascal_case }}.query
         data = paginate(query, schema)
         return return_code.SUCCESS.set_data(data).d, 200
 
     def post(self):
-        schema = {\{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
-        {\{title_lower}}s = schema.load(request.json)
-        for {\{title_lower}} in {\{title_lower}}s:
-            {\{title_lower}}.updated_by = current_user.id
-            {\{title_lower}}.org_code = current_user.org_code
-        db.session.add_all({\{title_lower}}s)
+        schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
+        {{title_lower}}s = schema.load(request.json)
+        for {{title_lower}} in {{title_lower}}s:
+            {{title_lower}}.updated_by = current_user.id
+            {{title_lower}}.org_code = current_user.org_code
+        db.session.add_all({{title_lower}}s)
         db.session.flush()
 
         return return_code.SUCCESS.d, 200
 
 
-@{\{title_lower}}_bp.route('/{\{title_lower}}s/list', methods=['POST'])
+@{{title_lower}}_bp.route('/{{title_lower}}s/list', methods=['POST'])
 @jwt_required
 def query_list():
     req = request.json
     id = req.get('id', None)
     date_type = req.get('dateType', None)
     sort = req.get("sort", None)
-    query = {\{title_lower | to_pascal_case }}.query. \
-        with_entities({\% for col in columns%}{\{title_lower | to_pascal_case }}.{\{col.name |lower}}, {\% endfor %})
+    query = {{title_lower | to_pascal_case }}.query. \
+        with_entities({%for col in columns%}{{title_lower | to_pascal_case }}.{{col.name |lower}}, {%endfor %})
     if id:
         query = query.filter_by(id=id)
     if date_type:
         query = query.filter_by(date_type=date_type)
     if sort:
         query = query.order_by(text(sort))
-    schema = {\{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
+    schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
     data = schema.dump(query.all())
     return return_code.SUCCESS.set_data(data).d, 200
 
 
 {%- if cookiecutter.use_excel == "yes" %}
-@{\{title_lower}}_bp.route('/{\{title_lower}}s/export', methods=['POST'])
+@{{title_lower}}_bp.route('/{{title_lower}}s/export', methods=['POST'])
 @jwt_required
 def export_excel():
-    query_sets = {\{title_lower | to_pascal_case }}.query.all()
-    column_names = [{\% for col in columns%}'{\{col.name }}', {\% endfor %}]
-    colnames = [{\% for col in columns%}'{\{col.comment }}', {\% endfor %}]
+    query_sets = {{title_lower | to_pascal_case }}.query.all()
+    column_names = [{%for col in columns%}'{{col.name }}', {%endfor %}]
+    colnames = [{%for col in columns%}'{{col.comment }}', {%endfor %}]
     return excel.make_response_from_query_sets(query_sets, column_names, file_type="xlsx",
-                                               file_name='{\{tb_obj.comment}}', sheet_name='{\{tb_obj.commen}}', colnames=colnames)
+                                               file_name='{{tb_obj.comment or tb_obj.info}}', sheet_name='{{tb_obj.comment or tb_obj.info}}', colnames=colnames)
 
 
-@{\{title_lower}}_bp.route('/{\{title_lower}}s/import', methods=['POST'])
+@{{title_lower}}_bp.route('/{{title_lower}}s/import', methods=['POST'])
 @jwt_required
 def import_excel():
     session = db.session
     try:
-        column_names = [{\% for col in columns%}'{\{col.name }}', {\% endfor %}]
+        column_names = [{%for col in columns%}'{{col.name }}', {%endfor %}]
         records = request.get_records(field_name='file', name_columns_by_row=-1, start_row=1, auto_detect_int=False, colnames=column_names)
         db_util.increment_update(session=session,
                                  data_dict_list=records,
-                                 schema_type={\{title_lower | to_pascal_case }}Schema,
+                                 schema_type={{title_lower | to_pascal_case }}Schema,
                                  is_src=False,
                                  request_id=current_user.id)
         session.flush()

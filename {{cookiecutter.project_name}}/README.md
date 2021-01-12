@@ -1,5 +1,5 @@
 ## 项目简介
-1. XXX
+1. {{cookiecutter.project_name}}
 
 
 ## 技术选型

@@ -6,7 +6,7 @@ services:
         build: ./{{cookiecutter.app_name}}-be
         restart: always
         privileged: true
-        command: gunicorn {{cookiecutter.app_name}}.wsgi:app --workers=5 --worker-class gevent -t300 -b 0.0.0.0:5002
+        command: gunicorn {{cookiecutter.app_name}}.wsgi:app --workers=5 --max-requests 100 --max-requests-jitter 50 --worker-class gevent -t300 -b 0.0.0.0:5002
         networks:
             {{cookiecutter.app_name}}_net:
                 aliases:

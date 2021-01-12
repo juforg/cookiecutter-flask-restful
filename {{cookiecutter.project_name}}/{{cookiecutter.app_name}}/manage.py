@@ -2,7 +2,7 @@ import click
 from flask.cli import FlaskGroup
 
 from {{cookiecutter.app_name}}.app import create_app
-from tests.generator import model_generator
+from code_generator import model_generator
 
 def create_{{cookiecutter.app_name}}(info):
     return create_app(cli=True)

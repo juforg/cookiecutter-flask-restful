@@ -1,4 +1,4 @@
-FROM python:3.7.2-slim-stretch
+FROM python:3.7.4-slim-stretch
 {%- if cookiecutter.use_oracle == "yes" %}
 ENV LD_LIBRARY_PATH="/usr/local/lib;/usr/local/instantclient"
 ENV NLS_LANG="AMERICAN_AMERICA.AL32UTF8"

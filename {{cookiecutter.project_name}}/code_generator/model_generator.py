@@ -22,9 +22,7 @@ from pick import pick
 from {{cookiecutter.app_name}}.commons.db_util import dbtype_transfer
 from {{cookiecutter.app_name}}.commons.utils.str_util import to_camel_case, to_pascal_case
 from {{cookiecutter.app_name}}.extensions import db
-from flask import current_app
-
-from tests.generator.cust_filter import factoryboy_gen
+from code_generator.cust_filter import factoryboy_gen
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +34,7 @@ schema_path = os.path.join(os.path.dirname(__file__), "../..", '{{cookiecutter.a
 if not os.path.exists(schema_path): os.makedirs(schema_path)
 tmp_path = os.path.join(os.path.dirname(__file__), "../..", 'tmp', 'api')
 if not os.path.exists(tmp_path): os.makedirs(tmp_path)
-tb_prefix = ''
+tb_prefix = '{{cookiecutter.app_name}}_'
 jinjia_env = Environment(
     loader=PackageLoader('{{cookiecutter.app_name}}', 'templates'),
     autoescape=True)

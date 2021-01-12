@@ -1,5 +1,6 @@
 /opt/{{cookiecutter.app_name}}/*/{{cookiecutter.app_name}}.log{
     rotate 5
+    su root root
     daily
     compress
     delaycompress

@@ -14,5 +14,12 @@
     "admin_user_username": "admin",
     "admin_user_email": "admin@mail.com",
     "admin_user_password": "admin",
-    "wsgi_server": ["none", "uwsgi", "gunicorn"]
+    "wsgi_server": ["none", "uwsgi", "gunicorn"],
+    "_copy_without_render": [
+        "*.j2",
+        "*not_rendered_dir",
+        "rendered_dir/not_rendered_file.ini",
+        "*.pdman.json"
+    ],
+    "_extensions": ["jinja2_time.TimeExtension", "cookiecutter.extensions.JsonifyExtension", "cookiecutter.extensions.RandomStringExtension", "cookiecutter.extensions.SlugifyExtension"]
 }

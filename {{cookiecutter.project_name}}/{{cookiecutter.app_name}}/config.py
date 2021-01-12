@@ -46,6 +46,8 @@ JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
 JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", '120')))
 {%- if cookiecutter.use_celery == "yes" %}
 # ------------------------------------------------CELERY START-----------------
+# 修改默认队列名，防止不同应用使用同个broker出现问题
+CELERY_TASK_DEFAULT_QUEUE = os.getenv("CELERY_TASK_DEFAULT_QUEUE", "{{cookiecutter.app_name}}_default_q")
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND_URL")
 CELERY_TIMEZONE = 'Asia/Shanghai'
@@ -57,6 +59,7 @@ CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'pickle']  # 指定接收的内容�
 # C_FORCE_ROOT = 'true'  # 允许root用户启动celery
 # CELERYD_CONCURRENCY = 1  # 并发只有一个进程消费
 # CELERYD_PREFETCH_MULTIPLIER = 1
+# worker_max_memory_per_child = int(celery_max_mem_kilobytes / app.conf.worker_concurrency)
 CELERYD_MAX_TASKS_PER_CHILD = 10        # 每个worker最多执行万10个任务就会被销毁，可防止内存泄露
 CELERY_TASK_RESULT_EXPIRES = 60 * 10  # 任务结果过期时间
 CELERYD_TASK_TIME_LIMIT = 60 * 60 * 2  # 任务超时时间
@@ -94,5 +97,5 @@ validate.Length.message_min = "字段长度不允许小于最小长度 {min}"
 validate.Length.message_max = "字段长度不允许超过最大长度{max}"
 validate.Length.message_all = "字段长度必须大于 {min} 小于 {max}"
 validate.Length.message_equal = "字段长度必须为 {equal}"
-validate.Range.message_min = "必须 {min_op} \{\{min\}\}."
+validate.Range.message_min = "必须 {min_op} {min}."
 validate.Range.message_gte = "大于等于"

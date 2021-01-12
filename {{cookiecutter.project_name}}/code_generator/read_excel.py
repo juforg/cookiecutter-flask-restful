@@ -95,7 +95,7 @@ def print_field_info_list(type: str,file_name: None, dbchange = False, use_udf =
             db_field_list.append("{field_name} = {fn}.{simple_field_type}(\nrequired={required}, \n"
                                  "{allow_none}"
                                  "{v}"
-                                 "error_messages=\{\{'required': '{field_desc1}不能为空'\}\}, \n"
+                                 "error_messages={'required': '{field_desc1}不能为空'}, \n"
                                  "data_key='{src_field_name}')\n"
                                  .format(field_name=field_name,fn=fn, simple_field_type=simple_field_type, required=required,
                                          v=v, allow_none=allow_none,field_desc1=field_desc1, src_field_name=src_field_name))
