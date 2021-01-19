@@ -97,7 +97,7 @@ def init_celery(app=None):
     #         'schedule': crontab(minute=10, hour=2)
     #     }
     # }
-    celery.conf.update(app.config)
+    celery.conf.update(app.config.get("CELERY", {}))
 
     class ContextTask(celery.Task):
         """Make celery tasks work with Flask app context"""
