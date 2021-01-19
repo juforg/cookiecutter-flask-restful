@@ -22,11 +22,11 @@ SQLALCHEMY_ECHO = True if os.getenv("SQLALCHEMY_ECHO") == "True" else False
 # 默认2小时。该值一定要比数据库wait_timeout小，否则它不起作用
 # SQLALCHEMY_POOL_RECYCLE = 3000
 SQLALCHEMY_ENGINE_OPTIONS = {
-    'pool_size': int(os.getenv("SQLALCHEMY_POOL_SIZE", 0)),
-    'max_overflow': int(os.getenv("SQLALCHEMY_POOL_OVERFLOW", 2)),
+    'pool_size': int(os.getenv("SQLALCHEMY_POOL_SIZE", "0")),
+    'max_overflow': int(os.getenv("SQLALCHEMY_POOL_OVERFLOW", "2")),
     'echo_pool': 'debug' if os.getenv("SQLALCHEMY_ECHO_POOL") == "True" else False,
     'pool_recycle': 60 * 5,
-    'pool_timeout': int(os.getenv("SQLALCHEMY_POOL_TIMEOUT", 20)),
+    'pool_timeout': int(os.getenv("SQLALCHEMY_POOL_TIMEOUT", "20")),
     'pool_pre_ping': True,   # 测试是否可用
     'pool_use_lifo': False,   # 越老的越容易被回收，一定要跟ping 配合，否则老的极易被回收造成连接不可用
     'poolclass': QueuePool,  # flask 应用可以设QueuePool，celery应用可能不用池
@@ -51,14 +51,16 @@ CELERY_TASK_DEFAULT_QUEUE = os.getenv("CELERY_TASK_DEFAULT_QUEUE", "{{cookiecutt
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND_URL")
 CELERY_TIMEZONE = 'Asia/Shanghai'
+# CELERY_ENABLE_UTC = True
 CELERYD_FORCE_EXECV = True  # 非常重要,有些情况下可以防止死锁
 CELERY_IGNORE_RESULT = True   # 任务结果不缓存
-# CELERY_TASK_SERIALIZER = 'pickle'  # 任务序列化和反序列化使用pickle方案
+CELERY_TASK_SERIALIZER = 'json'  # 任务序列化和反序列化使用方案 Can be json (default), pickle, yaml, msgpack
 CELERY_RESULT_SERIALIZER = 'json'  # 读取任务结果一般性能要求不高，所以使用可读性更好的json
-CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'pickle']  # 指定接收的内容类型
+CELERY_ACCEPT_CONTENT = ['json']  # 指定接收的内容类型 可选 , 'msgpack', 'pickle'
 # C_FORCE_ROOT = 'true'  # 允许root用户启动celery
 # CELERYD_CONCURRENCY = 1  # 并发只有一个进程消费
 # CELERYD_PREFETCH_MULTIPLIER = 1
+# CELERYD_PREFETCH_MULTIPLIER = 1 每次获取几个任务
 # worker_max_memory_per_child = int(celery_max_mem_kilobytes / app.conf.worker_concurrency)
 CELERYD_MAX_TASKS_PER_CHILD = 10        # 每个worker最多执行万10个任务就会被销毁，可防止内存泄露
 CELERY_TASK_RESULT_EXPIRES = 60 * 10  # 任务结果过期时间

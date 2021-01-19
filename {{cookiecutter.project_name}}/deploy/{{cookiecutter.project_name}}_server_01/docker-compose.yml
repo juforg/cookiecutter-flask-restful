@@ -21,7 +21,8 @@ services:
     {{cookiecutter.app_name}}-celery:
         container_name: {{cookiecutter.app_name}}-celery
         image: {{cookiecutter.app_name}}-be:latest
-        command: "celery worker -A {{cookiecutter.app_name}}.celery_app:app -E --loglevel=info --logfile=/opt/{{cookiecutter.app_name}}/logs/celery-{{cookiecutter.app_name}}.log --heartbeat-interval=15"
+        command: "celery worker -A {{cookiecutter.app_name}}.celery_app:app -E -n {{cookiecutter.app_name}}@%%h --loglevel=info --logfile=/opt/{{cookiecutter.app_name}}/logs/celery-{{cookiecutter.app_name}}.log --heartbeat-interval=15 --without-gossip --without-mingle"
+#        ;celery beat -A {{cookiecutter.app_name}}.celery_app:app
         environment:
           - USER_ID=${USER_ID}
 #          - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq

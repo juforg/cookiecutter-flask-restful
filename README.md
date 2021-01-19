@@ -22,8 +22,15 @@ Features
 * 支持代码自动生成（api和数据库model）
 * 模板下载接口示例
 * marshmallow自定义数字类型field，防止空字符串报错
-* 数据库批量操作工具类 db_util 支持 全量插入，全量保存，增量保存
-* 字符工具类 str_util 判断数字，驼峰转换
+* 数据库批量操作工具类 db_util
+    * 获取非默认数据库连接
+    * 全量插入
+    * 全量保存(先删除后插入)
+    * 增量保存(有则更新，无则新增)
+    * datafram转dict list 工具
+* 字符工具类 str_util
+    * 判断数字
+    * 驼峰转换
 * flask 日志扩展为 queue handler 提升性能
 * 增加字典功能及字典翻译类
 * 增加异步线程备份df2cvs工具类 backup_util

@@ -220,3 +220,4 @@ https://www.oracle.com/database/technologies/instant-client/macos-intel-x86-down
 - https://www.cnblogs.com/xybaby/p/9197032.html
 - https://medium.com/@rob.blackbourn/how-to-use-python-logging-queuehandler-with-dictconfig-1e8b1284e27a
 - https://www.cnblogs.com/cwp-bg/p/8759638.html
+- https://stackoverflow.com/questions/55249197/what-are-the-consequences-of-disabling-gossip-mingle-and-heartbeat-for-celery-w

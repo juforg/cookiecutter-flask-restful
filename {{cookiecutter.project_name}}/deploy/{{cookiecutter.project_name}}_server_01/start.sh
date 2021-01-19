@@ -25,10 +25,8 @@ echo "$PYTHON_PATH/pip install -r requirements.txt -i http://mirrors.aliyun.com/
 $PYTHON_PATH/pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
 
 echo "开始重启"
-if [ ! -f /tmp/supervisord.pid ]; then
-  echo "启动supervisord守护进程"
-  $PYTHON_PATH/supervisord -c $APP_ROOT/supervisord.conf -u sulipadmin@jqdev
-  $PYTHON_PATH/supervisorctl -c $APP_ROOT/supervisord.conf -u sulipadmin@jqdev
-fi
-$PYTHON_PATH/supervisorctl reload
+
+$PYTHON_PATH/supervisorctl -c $APP_ROOT/supervisord.conf -u appuser stop all
+$PYTHON_PATH/supervisorctl -c $APP_ROOT/supervisord.conf -u appuser shutdown
+$PYTHON_PATH/supervisord -c $APP_ROOT/supervisord.conf -u appuser
 echo "执行完成！"
