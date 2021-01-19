@@ -9,7 +9,7 @@ from sqlalchemy.pool import QueuePool
 ENV = os.getenv("FLASK_ENV")
 # DEBUG = ENV == "development"
 SECRET_KEY = os.getenv("SECRET_KEY")
-PROPAGATE_EXCEPTIONS = True
+
 SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 # SQLALCHEMY_BINDS = {
@@ -46,6 +46,7 @@ JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
 JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(minutes=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", '120')))
 {%- if cookiecutter.use_celery == "yes" %}
 # ------------------------------------------------CELERY START-----------------
+ROPAGATE_EXCEPTIONS = True
 # 修改默认队列名，防止不同应用使用同个broker出现问题
 CELERY_TASK_DEFAULT_QUEUE = os.getenv("CELERY_TASK_DEFAULT_QUEUE", "{{cookiecutter.app_name}}_default_q")
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")

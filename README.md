@@ -71,11 +71,40 @@ Used packages :
 
 ## Usage
 
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Authentication](#athentication)
+* [Running tests](#running-tests)
+* [WSGI Server](#installing-a-wsgi-server)
+* [Flask CLI](#using-flask-cli)
+* [Using Celery](#using-celery)
+* [Using Docker](#using-docker)
+* [Makefile](#makefile-usage)
+* [APISpec and swagger](#using-apispec-and-swagger)
+* [Changelog](#changelog)
+
+
 ### Installation
 
-For the example, let's say you named your app `myapi` and your project `myproject`
+#### Install cookiecutter
 
-Once project started with cookiecutter, you can install it using pip :
+Make sure you have cookiecutter installed in your local machine.
+
+You can install it using this command : `pip install cookiecutter`
+
+#### Create your project
+
+Starting a new project is as easy as running this command at the command line. No need to create a directory first, the cookiecutter will do it for you.
+
+To create a project run the following command and follow the prompt
+
+`cookiecutter https://github.com/juforg/cookiecutter-flask-restful`
+
+#### Install project requirements
+
+Let's say you named your app `myapi` and your project `myproject`
+
+You can install it using pip :
 
 ```
 cd myproject
@@ -86,13 +115,15 @@ pip install -e .
 You have now access to cli commands and you can init your project
 
 ```
-myapi init
+flask db upgrade
+flask myapi init
 ```
 
 To list all commands
 
 ```
-myapi --help
+flask --help
+flask myapi --help
 ```
 
 ### Configuration
@@ -160,25 +191,107 @@ this will only return a new access token
 
 ### Running tests
 
+
+#### Using tox
+
 Simplest way to run tests is to use tox, it will create a virtualenv for tests, install all dependencies and run pytest
 
 ```
 tox
 ```
 
-But you can also run pytest manually, you just need to install tests dependencies before
+If you just want to run pytest and avoid linters you can use 
 
 ```
-pip install pytest pytest-runner pytest-flask pytest-factoryboy factory_boy
+tox -e test
+```
+
+#### Using pytest directly
+
+If you want to run pytest manually without using tox you'll need to install some dependencies before
+
+```
+pip install pytest pytest-runner pytest-flask pytest-factoryboy pytest-celery factory_boy
+```
+
+Then you can invoke pytest
+
+```
 pytest
 ```
 
-With docker-compose and the Makefile
+Note that tox is setting environment variables for you when testing, but when using pytest directly that's not the case. To avoid setting up env variables each time you run pytest, this cookiecutter provide a `.testenv` file that contains default configuration for testing. Don't forget to update it if your local env doesn't match those defaults.
+
+#### Using docker
+
+Testing with docker is another great option, since it take cares of everything and spawn required services for you. To run tests within docker containers, you can use the provided Makefile:
+
+Build images:
+
+```bash
+make build
+```
+
+Running tox with flake8, black and pytest:
+
+```bash
+make tox
+```
+
+Running tox with pytest only:
+
 ```bash
 make tests
 ```
 
-**WARNING**: you will need to set env variables
+#### Testing Celery
+
+Testing celery require at least a rabbitMQ (or any other compatible broker) running. By default, when you use tox or the `.testenv` file, celery broker and result backend are configured as follow:
+
+```
+CELERY_BROKER_URL=amqp://guest:guest@localhost/
+CELERY_RESULT_BACKEND_URL=amqp://guest:guest@localhost/
+```
+
+Meaning that it will try to connect to a local rabbitMQ server using guest user. Don't forget to update those settings if your configuration doesn't match.
+
+If you can't / don't want to install a local rabbitMQ server or any other available celery broker, you have 2 options:
+
+1. Use docker
+
+You can use docker-compose to run tests, as it will spawn a rabbitMQ and a redis servera and set correct env variables for configuration. All tests commands are available inside the Makefile to simplify this process.
+
+2. Update the tests to use eager mode
+
+**NOTE** this is not recommanded by celery: https://docs.celeryproject.org/en/stable/userguide/testing.html
+
+Alternatively, if you don't have a local broker and can't use docker, you can update unit tests to run them using the `task_always_eager` celery setting. This will actually run all tasks locally by blocking until tasks return (see https://docs.celeryproject.org/en/stable/userguide/configuration.html#std:setting-task_always_eager for more details).
+
+Example of `test_celery.py` file that use `task_always_eager`
+
+```python
+import pytest
+
+from myapi.app import init_celery
+from myapi.tasks.example import dummy_task
+
+
+@pytest.fixture(scope="session")
+def celery_session_app(celery_session_app, app):
+    celery = init_celery(app)
+
+    celery_session_app.conf = celery.conf
+    celery_session_app.conf.task_always_eager = True
+    celery_session_app.Task = celery_session_app.Task
+
+    yield celery_session_app
+
+
+def test_example(celery_session_app):
+    """Simply test our dummy task using celery"""
+    res = dummy_task.delay()
+    assert res.get() == "OK"
+```
 
 ### Installing a wsgi server
 #### Running with gunicorn
@@ -288,7 +401,7 @@ With compose
 ```bash
 docker-compose up
 ...
-docker exec -it <container_id> myapi init
+docker exec -it <container_id> flask myapi init
 ```
 
 With docker-compose and the Makefile
@@ -313,12 +426,17 @@ Run the containers
 make run
 ```
 
-Run database migrations
+Create new database migration
 ```bash
 make db-migrate
 ```
 
-Run tests
+Apply database migrations
+```bash
+make db-upgrade
+```
+
+Run tests inside containers
 ```bash
 make test
 ```
@@ -340,6 +458,26 @@ This come with a very simple extension that allow you to override basic settings
 * `SWAGGER_URL_PREFIX`: URL prefix to use for swagger blueprint, default to `None`
 
 ## Changelog
+
+### 6/08/2020
+
+* Updated README for tests and celery
+* Added a `.testenv` file to avoid needing to set env variables when running pytest manually
+* Updated celery fixtures to use session fixtures (for worker and app)
+* Replaced `prefork` in `celery_worker_pool` by `solo` (#41)
+
+### 18/01/2020
+
+* Added python 3.8 support
+* Upgraded to marshmallow 3
+* Added `lint` and `tests` envs to tox
+* Added black support
+* Improved travis tests
+* Updated Makefile to handle tests with celery
+* Updated tox to handle env variables for celery when runing tests
+* Added initial db migration instead of relying on `db.create_all()`
+* Added new step to create database in README
+* Various cleanup
 
 ### 08/2019
 

@@ -24,7 +24,7 @@ cachetools==4.1.0
 aiohttp==3.6.2
 click==7.0
 {%- if cookiecutter.use_celery == "yes" %}
-celery[redis,msgpack]<5
+celery[redis]<5
 kombu<5
 {%- endif %}
 {%- if cookiecutter.wsgi_server == "uwsgi" %}

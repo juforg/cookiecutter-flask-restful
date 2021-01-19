@@ -1,30 +1,18 @@
 from flask import request, Blueprint
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_current_user, get_jwt_identity
-
 from {{cookiecutter.app_name}}.commons import db_util, common_fun
+from {{cookiecutter.app_name}}.api.schemas.user import UserSchema
 from {{cookiecutter.app_name}}.commons.constants import const
 from {{cookiecutter.app_name}}.commons.constants import return_code
 from {{cookiecutter.app_name}}.models import User
-from {{cookiecutter.app_name}}.extensions import ma, db
+from {{cookiecutter.app_name}}.extensions import db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
-from marshmallow import fields
 import logging
 
 logger = logging.getLogger(__name__)
 
 user_bp = Blueprint('user', __name__, url_prefix='/api/v1')
-
-
-class UserSchema(ma.SQLAlchemySchema):
-
-    id = fields.Int(dump_only=True)
-    password = fields.String(load_only=True, required=True)
-
-    class Meta:
-        model = User
-        sqla_session = db.session
-        load_instance = True
 
 
 class UserResource(Resource):
@@ -96,6 +84,7 @@ class UserResource(Resource):
         404:
           description: user does not exists
     """
+
     method_decorators = [jwt_required]
 
     def get(self, user_id):
@@ -110,10 +99,11 @@ class UserResource(Resource):
     def put(self, user_id):
         session = db.session
         schema = UserSchema(partial=True)
-        # user = User.query.get(user_id)
-        user = schema.load(request.json)
+        user = User.query.get(user_id)
+        user = schema.load(request.json, instance=user)
         session.merge(user)
         # session.flush()
+
         return return_code.SUCCESS.d, 200
 
     def delete(self, user_id):
@@ -166,6 +156,7 @@ class UserList(Resource):
                     example: user created
                   user: UserSchema
     """
+
     method_decorators = [jwt_required]
 
     def get(self):

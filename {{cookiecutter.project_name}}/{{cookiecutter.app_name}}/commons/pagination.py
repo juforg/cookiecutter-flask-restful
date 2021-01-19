@@ -3,8 +3,8 @@
 from flask import url_for, request
 from sqlalchemy import text
 
-DEFAULT_PAGE_SIZE = 50
-DEFAULT_PAGE_NUMBER = 1
+DEFAULT_PAGE_SIZE = "50"
+DEFAULT_PAGE_NUMBER = "1"
 
 
 def paginate(query, schema):
@@ -14,7 +14,7 @@ def paginate(query, schema):
     if sort:
         query = query.order_by(text(sort))
     page_obj = query.paginate(page=page, per_page=per_page)
-    next = url_for(
+    next_ = url_for(
         request.endpoint,
         page=page_obj.next_num if page_obj.has_next else page_obj.page,
         pageSize=per_page,
@@ -28,9 +28,9 @@ def paginate(query, schema):
     )
 
     return {
-        'total': page_obj.total,
-        'pages': page_obj.pages,
-        'next': next,
-        'prev': prev,
-        'items': schema.dump(page_obj.items)
+        "total": page_obj.total,
+        "pages": page_obj.pages,
+        "next": next_,
+        "prev": prev,
+        "items": schema.dump(page_obj.items),
     }

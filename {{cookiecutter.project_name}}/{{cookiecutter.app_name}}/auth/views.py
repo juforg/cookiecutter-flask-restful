@@ -10,11 +10,7 @@ from flask_jwt_extended import (
 
 from {{cookiecutter.app_name}}.models import User
 from {{cookiecutter.app_name}}.extensions import pwd_context, jwt, apispec
-from {{cookiecutter.app_name}}.auth.helpers import (
-    revoke_token,
-    is_token_revoked,
-    add_token_to_database
-)
+from {{cookiecutter.app_name}}.auth.helpers import revoke_token, is_token_revoked, add_token_to_database
 from {{cookiecutter.app_name}}.commons.constants import return_code
 import logging
 
@@ -22,7 +18,7 @@ logger = logging.getLogger(__name__)
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-@blueprint.route('/login', methods=['POST'])
+@blueprint.route("/login", methods=["POST"])
 def login():
     """Authenticate user and return tokens
 
@@ -66,8 +62,8 @@ def login():
     ret = {}
     try:
 
-        username = request.json.get('username', None)
-        password = request.json.get('password', None)
+        username = request.json.get("username", None)
+        password = request.json.get("password", None)
         if not username or not password:
             return return_code.USER_NOT_FOUND.d, 200
 
@@ -89,7 +85,8 @@ def login():
     return return_code.SUCCESS.set_data(ret).d, 200
 
 
-@blueprint.route('/refresh', methods=['POST'])
+
+@blueprint.route("/refresh", methods=["POST"])
 @jwt_refresh_token_required
 def refresh():
     """Get an access token from a refresh token
@@ -120,14 +117,12 @@ def refresh():
     """
     current_user = get_jwt_identity()
     access_token = create_access_token(identity=current_user)
-    ret =  {
-        'token': access_token
-    }
-    add_token_to_database(access_token, app.config['JWT_IDENTITY_CLAIM'])
+    ret = {"access_token": access_token}
+    add_token_to_database(access_token, app.config["JWT_IDENTITY_CLAIM"])
     return return_code.SUCCESS.set_data(ret).d, 200
 
 
-@blueprint.route('/revoke_access', methods=['DELETE'])
+@blueprint.route("/revoke_access", methods=["DELETE"])
 @jwt_required
 def revoke_access_token():
     """Revoke an access token
@@ -151,13 +146,13 @@ def revoke_access_token():
         401:
           description: unauthorized
     """
-    jti = get_raw_jwt()['jti']
+    jti = get_raw_jwt()["jti"]
     user_identity = get_jwt_identity()
     revoke_token(jti, user_identity)
     return return_code.SUCCESS.d, 200
 
 
-@blueprint.route('/revoke_refresh', methods=['DELETE'])
+@blueprint.route("/revoke_refresh", methods=["DELETE"])
 @jwt_refresh_token_required
 def revoke_refresh_token():
     """Revoke a refresh token, used mainly for logout
@@ -181,7 +176,7 @@ def revoke_refresh_token():
         401:
           description: unauthorized
     """
-    jti = get_raw_jwt()['jti']
+    jti = get_raw_jwt()["jti"]
     user_identity = get_jwt_identity()
     revoke_token(jti, user_identity)
     return return_code.SUCCESS.d, 200
