@@ -2,6 +2,7 @@
 import time
 
 from pandas import DataFrame
+import numpy
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker, scoped_session
 
@@ -86,7 +87,7 @@ def full_insert(session, schema_type, data_dict_list, model_type, request_id: st
     start = time.time()
     count = session.query(model_type).filter_by(**kwargs).delete()
     logger.info("数据[%s]全量删除,request_id:[%s],kwargs:[%s]完成, 删除:%s,[performance-DD]耗时:[%s]", model_type.__tablename__, request_id, kwargs.__str__(), count, time.time() - start)
-    batch_insert(session, schema_type, data_dict_list, model_type, request_id, is_src)
+    return batch_insert(session, schema_type, data_dict_list, model_type, request_id, is_src)
 
 
 def batch_insert(session, schema_type, data_dict_list, model_type, request_id: str, is_src: bool):
@@ -115,6 +116,7 @@ def batch_insert(session, schema_type, data_dict_list, model_type, request_id: s
         ni += 1
 
     logger.info("数据全量保存:,request_id:[%s],数据量:[%s],[performance-SD]耗时:[%s]", request_id, len(data_dict_list), time.time() - start)
+    return len(data_dict_list)
 
 
 def increment_update(session, schema_type, data_dict_list, is_src: bool, request_id: str, **kwargs):
@@ -148,6 +150,7 @@ def increment_update(session, schema_type, data_dict_list, is_src: bool, request
 
     logger.info("数据[%s]增量更新:,request_id:[%s],kwargs:[%s],数据量:[%s],[performance-UD]耗时:[%s]", schema_type.__name__, request_id, kwargs.__str__(), len(data_dict_list),
                 time.time() - start)
+    return len(data_dict_list)
 
 
 def process_df_to_db(data_df: DataFrame, keys: list = None):
@@ -164,6 +167,8 @@ def process_df_to_db(data_df: DataFrame, keys: list = None):
                 record[key] = record[key].to_pydatetime()
             elif pd.isnull(record[key]):
                 record[key] = None
+            elif isinstance(record[key], numpy.float64):
+                record[key] = record[key].astype(float)
     return records
 
 

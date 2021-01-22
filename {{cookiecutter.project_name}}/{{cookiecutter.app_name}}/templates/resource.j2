@@ -184,7 +184,14 @@ class {{title_lower | to_pascal_case }}List(Resource):
 
     def get(self):
         schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
-        query = {{title_lower | to_pascal_case }}.query
+        query = {{title_lower | to_pascal_case }}.query. \
+            with_entities({% for col in columns%}{{title_lower | to_pascal_case }}.{{col.name |lower}}, {% endfor %})
+        req = request.args
+        {% for col in columns%}
+        {{col.name }} = req.get('{{col.name | to_camel_case}}'){% endfor %}
+        {% for col in columns%}
+        if {{col.name}}:
+            query = query.filter({{title_lower | to_pascal_case }}.{{col.name |lower}} == {{col.name}}){% endfor %}
         data = paginate(query, schema)
         return return_code.SUCCESS.set_data(data).d, 200
 
@@ -203,19 +210,18 @@ class {{title_lower | to_pascal_case }}List(Resource):
 @{{title_lower}}_bp.route('/{{title_lower}}s/list', methods=['POST'])
 @jwt_required
 def query_list():
+    schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
     req = request.json
-    id = req.get('id', None)
-    date_type = req.get('dateType', None)
+    {% for col in columns%}
+    {{col.name }} = req.get('{{col.name | to_camel_case}}'){% endfor %}
     sort = req.get("sort", None)
     query = {{title_lower | to_pascal_case }}.query. \
-        with_entities({%for col in columns%}{{title_lower | to_pascal_case }}.{{col.name |lower}}, {%endfor %})
-    if id:
-        query = query.filter_by(id=id)
-    if date_type:
-        query = query.filter_by(date_type=date_type)
+        with_entities({% for col in columns%}{{title_lower | to_pascal_case }}.{{col.name |lower}}, {% endfor %})
+    {% for col in columns%}
+    if {{col.name}}:
+        query = query.filter({{title_lower | to_pascal_case }}.{{col.name |lower}} == {{col.name}}){% endfor %}
     if sort:
         query = query.order_by(text(sort))
-    schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
     data = schema.dump(query.all())
     return return_code.SUCCESS.set_data(data).d, 200
 
