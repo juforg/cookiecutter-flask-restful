@@ -40,5 +40,5 @@ loggers:
     propogate: no
 root:
     level: INFO
-    handlers: [queue_listener_handler]
+    handlers: [console,queue_listener_handler]
     propogate: no

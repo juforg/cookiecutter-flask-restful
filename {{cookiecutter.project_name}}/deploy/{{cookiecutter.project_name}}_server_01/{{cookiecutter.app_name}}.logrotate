@@ -9,5 +9,7 @@
     nocopytruncate
     noolddir
     dateext
+    size=+100M
+    maxage 365
     create 777 root root
 }

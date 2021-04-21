@@ -34,7 +34,7 @@ schema_path = os.path.join(os.path.dirname(__file__), "../..", '{{cookiecutter.a
 if not os.path.exists(schema_path): os.makedirs(schema_path)
 tmp_path = os.path.join(os.path.dirname(__file__), "../..", 'tmp', 'api')
 if not os.path.exists(tmp_path): os.makedirs(tmp_path)
-tb_prefix = '{{cookiecutter.app_name}}_'
+tb_prefix = ['{{cookiecutter.app_name}}_', 'ti_', 'tu_', 'ts_', 'tt_', 'tl_', 'tm_']
 jinjia_env = Environment(
     loader=PackageLoader('{{cookiecutter.app_name}}', 'templates'),
     autoescape=True)
@@ -46,7 +46,7 @@ jinjia_env.filters['factoryboy_gen'] = factoryboy_gen
 
 def start():
     try:
-        db_url = os.getenv('SQLALCHEMY_DATABASE_URI')
+        db_url = os.getenv('DATABASE_URI')
         db.reflect()
         choose_title1 = '请选择生成的代码模块:'
         choose_options1 = ['api', 'model']
@@ -69,7 +69,7 @@ def start():
         for tb in geterate_tbs:
             var_dict = init_env_variable(tb.get('tb_name'), tb.get('tb_obj'))
             if 'model' in choose_selected1:
-                generate_model(tb.get('tb_name'), tb.get('tb_obj'), db_url)
+                generate_model(var_dict.get('tb_with_prefix_name'), var_dict.get('tb_name'), tb.get('tb_obj'), db_url)
             if 'api' in choose_selected1:
                 generate_resources(var_dict)
 
@@ -77,24 +77,28 @@ def start():
         logger.exception(e)
 
 
-def generate_model(tb_name: str, tb_obj, db_url):
+def generate_model(tb_with_prefix_name: str, tb_name: str, tb_obj, db_url):
     logger.info("start generate %s", tb_name)
-    if tb_prefix and tb_name.startswith(tb_prefix):
-        tb_name = tb_name[len(tb_prefix):]
-    outfile = os.path.abspath(os.path.join(model_path, tb_name.lower()))
-    gen_cmd = f'flask-sqlacodegen  {db_url} --tables {tb_name} --outfile "{outfile}.py"  --flask'
+    outfile = os.path.abspath(os.path.join(model_path, tb_name))
+    gen_cmd = f'flask-sqlacodegen  "{db_url}" --tables {tb_with_prefix_name} --outfile "{outfile}.py"  --flask'
     logger.info(gen_cmd)
     os.system(gen_cmd)
     logger.info("finish generate %s", tb_name)
+
+
+def remove_prefix(tb_name):
+    for i in tb_prefix:
+        if i and tb_name.startswith(i):
+            return tb_name[len(i):]
+    return tb_name
 
 
 def init_env_variable(tb_name: str, tb_obj):
     var_dict = dict()
     var_dict['tb_prefix'] = tb_prefix
     var_dict['tb_with_prefix_name'] = tb_name
-    var_dict['tb_name'] = tb_name[len(tb_prefix):] if tb_prefix and tb_name.startswith(tb_prefix) else tb_name
-    var_dict['tb_name'] = var_dict['tb_name'].lower()
-    var_dict['title_lower'] = tb_name.lower()
+    var_dict['tb_name'] = remove_prefix(tb_name)
+    var_dict['title_lower'] = remove_prefix(tb_name).lower()
     var_dict['tb_obj'] = tb_obj
     var_dict['columns'] = var_dict.get('tb_obj').columns
     var_dict['model_path'] = model_path
@@ -102,7 +106,7 @@ def init_env_variable(tb_name: str, tb_obj):
     var_dict['schema_path'] = schema_path
     var_dict['str_types'] = ['VARCHAR', 'CHAR', 'STRING']
     var_dict['datetime_types'] = ['TIMESTAMP', 'DATETIME']
-    var_dict['date_types'] =  ['DATE', 'Date']
+    var_dict['date_types'] = ['DATE', 'Date']
     return var_dict
 
 

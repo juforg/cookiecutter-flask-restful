@@ -178,6 +178,7 @@ type_dict = {
     "INT": "Int",
     "INTEGER": "Int",
     "SMALLINT": "Int",
+    "TINYINT": "Int",
     "DECIMAL": "Float",
     "FLOAT": "Float",
     "TIMESTAMP": "DateTime",

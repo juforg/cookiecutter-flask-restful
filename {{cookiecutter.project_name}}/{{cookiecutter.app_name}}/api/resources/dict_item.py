@@ -18,19 +18,19 @@ from sqlalchemy import text
 
 from {{cookiecutter.app_name}}.commons import db_util
 from {{cookiecutter.app_name}}.commons.constants import return_code
-from {{cookiecutter.app_name}}.models.dict import Dict
-from {{cookiecutter.app_name}}.api.schemas.dict import DictSchema
+from {{cookiecutter.app_name}}.models.dict_item import DictItem
+from {{cookiecutter.app_name}}.api.schemas.dict_item import DictItemSchema
 from {{cookiecutter.app_name}}.extensions import db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
 import flask_excel as excel
 
 logger = logging.getLogger(__name__)
 
-dict_bp = Blueprint('dict', __name__, url_prefix='/api/v1')
+dict_item_bp = Blueprint('dict_item', __name__, url_prefix='/api/v1')
 
 
-class DictResource(Resource):
-    """字典 resource
+class DictItemResource(Resource):
+    """字典明细 resource
 
     ---
     get:
@@ -48,9 +48,9 @@ class DictResource(Resource):
               schema:
                 type: object
                 properties:
-                  dict: DictSchema
+                  dict_item: DictItemSchema
         404:
-          description: dict does not exists
+          description: dict_item does not exists
     put:
       tags:
         - api
@@ -63,7 +63,7 @@ class DictResource(Resource):
         content:
           application/json:
             schema:
-              DictSchema
+              DictItemSchema
       responses:
         200:
           content:
@@ -73,10 +73,10 @@ class DictResource(Resource):
                 properties:
                   msg:
                     type: string
-                    example: dict updated
-                  dict: DictSchema
+                    example: dict_item updated
+                  dict_item: DictItemSchema
         404:
-          description: dict not exists
+          description: dict_item not exists
     delete:
       tags:
         - api
@@ -94,44 +94,44 @@ class DictResource(Resource):
                 properties:
                   msg:
                     type: string
-                    example: dict deleted
+                    example: dict_item deleted
         404:
-          description: dict does not exists
+          description: dict_item does not exists
     """
     method_decorators = [jwt_required]
 
     def get(self, id):
-        schema = DictSchema(unknown=True,)
-        dict = Dict.query.get(id)
-        if dict:
-            ret = schema.dump(dict.__dict__)
+        schema = DictItemSchema(unknown=True,)
+        dict_item = DictItem.query.get(id)
+        if dict_item:
+            ret = schema.dump(dict_item.__dict__)
             return return_code.SUCCESS.set_data(ret).d, 200
         else:
             return return_code.NOT_FOUND.d, 200
 
     def put(self, id):
         session = db.session
-        schema = DictSchema(unknown=True, partial=True)
-        # dict = Dict.query.get(id)
-        dict = schema.load(request.json)
-        dict.updated_by = current_user.id
-        session.merge(dict)
+        schema = DictItemSchema(unknown=True, partial=True)
+        # dict_item = DictItem.query.get(id)
+        dict_item = schema.load(request.json)
+        dict_item.updated_by = current_user.id
+        session.merge(dict_item)
         session.flush()
         return return_code.SUCCESS.d, 200
 
     def post(self, id):
-        schema = DictSchema(unknown=True)
-        dict = schema.load(request.json)
-        dict.updated_by = current_user.id
-        db.session.add(dict)
+        schema = DictItemSchema(unknown=True)
+        dict_item = schema.load(request.json)
+        dict_item.updated_by = current_user.id
+        db.session.add(dict_item)
         db.session.flush()
 
         return return_code.SUCCESS.d, 200
 
     def delete(self, id):
-        dict = Dict.query.get(id)
-        if dict:
-            db.session.delete(dict)
+        dict_item = DictItem.query.get(id)
+        if dict_item:
+            db.session.delete(dict_item)
             db.session.flush()
         else:
             return return_code.NOT_FOUND.d, 200
@@ -139,7 +139,7 @@ class DictResource(Resource):
         return return_code.SUCCESS.d, 200
 
 
-class DictList(Resource):
+class DictItemList(Resource):
     """Creation and get_all
 
     ---
@@ -158,7 +158,7 @@ class DictList(Resource):
                       results:
                         type: array
                         items:
-                          $ref: '#/components/schemas/DictSchema'
+                          $ref: '#/components/schemas/DictItemSchema'
     post:
       tags:
         - api
@@ -166,7 +166,7 @@ class DictList(Resource):
         content:
           application/json:
             schema:
-              DictSchema
+              DictItemSchema
       responses:
         201:
           content:
@@ -176,21 +176,23 @@ class DictList(Resource):
                 properties:
                   msg:
                     type: string
-                    example: dict created
-                  dict: DictSchema
+                    example: dict_item created
+                  dict_item: DictItemSchema
     """
     method_decorators = [jwt_required]
 
     def get(self):
-        schema = DictSchema(unknown=True, many=True)
-        query = Dict.query. \
-            with_entities(Dict.id, Dict.dict_name, Dict.dict_code, Dict.dict_desc, Dict.is_valid, Dict.org_code, Dict.create_by, Dict.create_time, Dict.update_by, Dict.update_time, Dict.revision, )
+        schema = DictItemSchema(unknown=True, many=True)
+        query = DictItem.query. \
+            with_entities(DictItem.id, DictItem.dict_code, DictItem.item_code, DictItem.item_value, DictItem.sort_no, DictItem.item_desc, DictItem.is_valid, DictItem.org_code, DictItem.create_by, DictItem.create_time, DictItem.update_by, DictItem.update_time, DictItem.revision, )
         req = request.args
         
         id = req.get('id')
-        dict_name = req.get('dictName')
         dict_code = req.get('dictCode')
-        dict_desc = req.get('dictDesc')
+        item_code = req.get('itemCode')
+        item_value = req.get('itemValue')
+        sort_no = req.get('sortNo')
+        item_desc = req.get('itemDesc')
         is_valid = req.get('isValid')
         org_code = req.get('orgCode')
         create_by = req.get('createBy')
@@ -200,52 +202,58 @@ class DictList(Resource):
         revision = req.get('revision')
         
         if id:
-            query = query.filter(Dict.id == id)
-        if dict_name:
-            query = query.filter(Dict.dict_name.like('%'+dict_name+'%'))
+            query = query.filter(DictItem.id == id)
         if dict_code:
-            query = query.filter(Dict.dict_code.like('%'+dict_code+'%'))
-        if dict_desc:
-            query = query.filter(Dict.dict_desc == dict_desc)
+            query = query.filter(DictItem.dict_code == dict_code)
+        if item_code:
+            query = query.filter(DictItem.item_code == item_code)
+        if item_value:
+            query = query.filter(DictItem.item_value == item_value)
+        if sort_no:
+            query = query.filter(DictItem.sort_no == sort_no)
+        if item_desc:
+            query = query.filter(DictItem.item_desc == item_desc)
         if is_valid:
-            query = query.filter(Dict.is_valid == is_valid)
+            query = query.filter(DictItem.is_valid == is_valid)
         if org_code:
-            query = query.filter(Dict.org_code == org_code)
+            query = query.filter(DictItem.org_code == org_code)
         if create_by:
-            query = query.filter(Dict.create_by == create_by)
+            query = query.filter(DictItem.create_by == create_by)
         if create_time:
-            query = query.filter(Dict.create_time == create_time)
+            query = query.filter(DictItem.create_time == create_time)
         if update_by:
-            query = query.filter(Dict.update_by == update_by)
+            query = query.filter(DictItem.update_by == update_by)
         if update_time:
-            query = query.filter(Dict.update_time == update_time)
+            query = query.filter(DictItem.update_time == update_time)
         if revision:
-            query = query.filter(Dict.revision == revision)
+            query = query.filter(DictItem.revision == revision)
         data = paginate(query, schema)
         return return_code.SUCCESS.set_data(data).d, 200
 
     def post(self):
-        schema = DictSchema(unknown=True, many=True)
-        dicts = schema.load(request.json)
-        for dict in dicts:
-            dict.updated_by = current_user.id
-            dict.org_code = current_user.org_code
-        db.session.add_all(dicts)
+        schema = DictItemSchema(unknown=True, many=True)
+        dict_items = schema.load(request.json)
+        for dict_item in dict_items:
+            dict_item.updated_by = current_user.id
+            dict_item.org_code = current_user.org_code
+        db.session.add_all(dict_items)
         db.session.flush()
 
         return return_code.SUCCESS.d, 200
 
 
-@dict_bp.route('/dicts/list', methods=['POST'])
+@dict_item_bp.route('/dict_items/list', methods=['POST'])
 @jwt_required
 def query_list():
-    schema = DictSchema(unknown=True, many=True)
+    schema = DictItemSchema(unknown=True, many=True)
     req = request.json
     
     id = req.get('id')
-    dict_name = req.get('dictName')
     dict_code = req.get('dictCode')
-    dict_desc = req.get('dictDesc')
+    item_code = req.get('itemCode')
+    item_value = req.get('itemValue')
+    sort_no = req.get('sortNo')
+    item_desc = req.get('itemDesc')
     is_valid = req.get('isValid')
     org_code = req.get('orgCode')
     create_by = req.get('createBy')
@@ -254,57 +262,61 @@ def query_list():
     update_time = req.get('updateTime')
     revision = req.get('revision')
     sort = req.get("sort", None)
-    query = Dict.query. \
-        with_entities(Dict.id, Dict.dict_name, Dict.dict_code, Dict.dict_desc, Dict.is_valid, Dict.org_code, Dict.create_by, Dict.create_time, Dict.update_by, Dict.update_time, Dict.revision, )
+    query = DictItem.query. \
+        with_entities(DictItem.id, DictItem.dict_code, DictItem.item_code, DictItem.item_value, DictItem.sort_no, DictItem.item_desc, DictItem.is_valid, DictItem.org_code, DictItem.create_by, DictItem.create_time, DictItem.update_by, DictItem.update_time, DictItem.revision, )
     
     if id:
-        query = query.filter(Dict.id == id)
-    if dict_name:
-        query = query.filter(Dict.dict_name == dict_name)
+        query = query.filter(DictItem.id == id)
     if dict_code:
-        query = query.filter(Dict.dict_code == dict_code)
-    if dict_desc:
-        query = query.filter(Dict.dict_desc == dict_desc)
+        query = query.filter(DictItem.dict_code == dict_code)
+    if item_code:
+        query = query.filter(DictItem.item_code == item_code)
+    if item_value:
+        query = query.filter(DictItem.item_value == item_value)
+    if sort_no:
+        query = query.filter(DictItem.sort_no == sort_no)
+    if item_desc:
+        query = query.filter(DictItem.item_desc == item_desc)
     if is_valid:
-        query = query.filter(Dict.is_valid == is_valid)
+        query = query.filter(DictItem.is_valid == is_valid)
     if org_code:
-        query = query.filter(Dict.org_code == org_code)
+        query = query.filter(DictItem.org_code == org_code)
     if create_by:
-        query = query.filter(Dict.create_by == create_by)
+        query = query.filter(DictItem.create_by == create_by)
     if create_time:
-        query = query.filter(Dict.create_time == create_time)
+        query = query.filter(DictItem.create_time == create_time)
     if update_by:
-        query = query.filter(Dict.update_by == update_by)
+        query = query.filter(DictItem.update_by == update_by)
     if update_time:
-        query = query.filter(Dict.update_time == update_time)
+        query = query.filter(DictItem.update_time == update_time)
     if revision:
-        query = query.filter(Dict.revision == revision)
+        query = query.filter(DictItem.revision == revision)
     if sort:
         query = query.order_by(text(sort))
     data = schema.dump(query.all())
     return return_code.SUCCESS.set_data(data).d, 200
 
 
-@dict_bp.route('/dicts/export', methods=['POST'])
+@dict_item_bp.route('/dict_items/export', methods=['POST'])
 @jwt_required
 def export_excel():
-    query_sets = Dict.query.all()
-    column_names = ['id', 'dict_name', 'dict_code', 'dict_desc', 'is_valid', 'org_code', 'create_by', 'create_time', 'update_by', 'update_time', 'revision', ]
-    colnames = ['主键', '字典名称', '字典编码', '字典描述', '是否有效 Y启用 N不启用', '机构代码', '创建人', '创建时间', '更新人', '更新时间', '版本号', ]
+    query_sets = DictItem.query.all()
+    column_names = ['id', 'dict_code', 'item_code', 'item_value', 'sort_no', 'item_desc', 'is_valid', 'org_code', 'create_by', 'create_time', 'update_by', 'update_time', 'revision', ]
+    colnames = ['主键', '字典编码', '项编码', '项值', '排序', '描述', '是否有效 Y启用 N不启用', '机构代码', '创建人', '创建时间', '更新人', '更新时间', '版本号', ]
     return excel.make_response_from_query_sets(query_sets, column_names, file_type="xlsx",
-                                               file_name='字典', sheet_name='字典', colnames=colnames)
+                                               file_name='字典明细', sheet_name='字典明细', colnames=colnames)
 
 
-@dict_bp.route('/dicts/import', methods=['POST'])
+@dict_item_bp.route('/dict_items/import', methods=['POST'])
 @jwt_required
 def import_excel():
     session = db.session
     try:
-        column_names = ['id', 'dict_name', 'dict_code', 'dict_desc', 'is_valid', 'org_code', 'create_by', 'create_time', 'update_by', 'update_time', 'revision', ]
+        column_names = ['id', 'dict_code', 'item_code', 'item_value', 'sort_no', 'item_desc', 'is_valid', 'org_code', 'create_by', 'create_time', 'update_by', 'update_time', 'revision', ]
         records = request.get_records(field_name='file', name_columns_by_row=-1, start_row=1, auto_detect_int=False, colnames=column_names)
         db_util.increment_update(session=session,
                                  data_dict_list=records,
-                                 schema_type=DictSchema,
+                                 schema_type=DictItemSchema,
                                  is_src=False,
                                  request_id=current_user.id)
         session.flush()

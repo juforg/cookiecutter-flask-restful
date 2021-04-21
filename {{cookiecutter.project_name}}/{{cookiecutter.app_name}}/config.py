@@ -51,7 +51,7 @@ ROPAGATE_EXCEPTIONS = True # 异常向父任务传送
 CELERY = {
     "broker_url": os.getenv("CELERY_BROKER_URL"),
     "result_backend": os.getenv("CELERY_RESULT_BACKEND_URL"),
-    "task_default_queue": os.getenv("CELERY_TASK_DEFAULT_QUEUE", "{{cookiecutter.app_name}}_default_q"), # 修改默认队列名，防止不同应用使用同个broker出现问题
+    "task_default_queue": os.getenv("CELERY_TASK_DEFAULT_QUEUE", "{{cookiecutter.app_name}}:celery"), # 修改默认队列名，防止不同应用使用同个broker出现问题
     "timezone": 'Asia/Shanghai',
     # "enable_utc": True,
     "task_ignore_result": True,  # 任务结果不缓存
@@ -60,7 +60,7 @@ CELERY = {
     "accept_content": ['json'], # 指定接收的内容类型 可选 , 'msgpack', 'pickle'
     # "worker_concurrency": 1 , # 并发只有一个进程消费
     # "worker_prefetch_multiplier": 1 , # 每次获取几个任务
-    # "worker_max_memory_per_child": int(celery_max_mem_kilobytes / app.conf.worker_concurrency) , # 最大内存
+    # "worker_max_memory_per_child": int(celery_max_mem_kilobytes / app.conf.worker_concurrency) , # 最大内存,单个任务超过限制，完成后会新建
     "worker_max_tasks_per_child": 10,        # 每个worker最多执行万10个任务就会被销毁，可防止内存泄露
     "result_expires": 60 * 10,  # 任务结果过期时间
     "task_time_limit": 60 * 60 * 2 , # 任务超时时间

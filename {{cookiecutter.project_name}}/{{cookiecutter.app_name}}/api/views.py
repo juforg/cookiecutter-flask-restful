@@ -4,7 +4,8 @@ from {{cookiecutter.app_name}}.extensions import apispec
 from {{cookiecutter.app_name}}.api.resources import UserResource, UserList
 from {{cookiecutter.app_name}}.api.schemas.user import UserSchema
 from {{cookiecutter.app_name}}.api.resources.user import UserInfo
-from {{cookiecutter.app_name}}.api.resources.dict import DictResource, DictList, DictItemResource, DictItemList, DictSchema, DictItemSchema
+from {{cookiecutter.app_name}}.api.resources.dict import DictResource, DictList, DictSchema
+from {{cookiecutter.app_name}}.api.resources.dict_item import DictItemResource, DictItemList, DictItemSchema
 
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
 api = Api(api_bp)

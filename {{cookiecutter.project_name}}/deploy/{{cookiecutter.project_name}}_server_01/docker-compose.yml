@@ -39,6 +39,7 @@ services:
         image: {{cookiecutter.app_name}}-fe:latest
         build: ./{{cookiecutter.app_name}}-fe
         restart: always
+        privileged: true
 #        user: ${USER_ID}
         networks:
             {{cookiecutter.app_name}}_net:

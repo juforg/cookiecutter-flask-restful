@@ -2,15 +2,16 @@
 from {{cookiecutter.app_name}}.extensions import db
 
 
-class Dict(db.Model):
-    """字典表 model
-    """
-    __tablename__ = 'ts_dict'
+class DictItem(db.Model):
+
+    __tablename__ = 'ts_dict_item'
 
     id = db.Column(db.Integer, primary_key=True, info='主键')
-    dict_name = db.Column(db.String(30, 'utf8mb4_bin'), info='字典名称')
-    dict_code = db.Column(db.String(30, 'utf8mb4_bin'), unique=True, info='字典编码')
-    dict_desc = db.Column(db.String(64, 'utf8mb4_bin'), info='字典描述')
+    dict_code = db.Column(db.String(30, 'utf8mb4_bin'), info='字典编码')
+    item_code = db.Column(db.String(30, 'utf8mb4_bin'), info='项编码')
+    item_value = db.Column(db.String(64, 'utf8mb4_bin'), info='项值')
+    sort_no = db.Column(db.Integer, info='排序')
+    item_desc = db.Column(db.String(128, 'utf8mb4_bin'), info='描述')
     is_valid = db.Column(db.String(1, 'utf8mb4_bin'), server_default=db.FetchedValue(), info='是否有效 Y启用 N不启用')
     org_code = db.Column(db.String(30, 'utf8mb4_bin'), nullable=False, info='机构代码')
     create_by = db.Column(db.String(30, 'utf8mb4_bin'), info='创建人')
@@ -20,11 +21,11 @@ class Dict(db.Model):
     revision = db.Column(db.Integer, server_default=db.FetchedValue(), info='版本号')
 
     __table_args__ = (
-        db.UniqueConstraint('dict_code', name='dict_code_uk'),
+        db.UniqueConstraint('dict_code', 'item_code', name='dict_item_code_uk'),
     )
 
     def __init__(self, **kwargs):
-        super(Dict, self).__init__(**kwargs)
+        super(DictItem, self).__init__(**kwargs)
 
     def __repr__(self):
-        return "<Dict %s>" % self.username
+        return "<DictItem %s>" % self.item_name
