@@ -86,6 +86,7 @@ def register_blueprints(app):
     app.register_blueprint(api.views.blueprint)
     app.register_blueprint(api.resources.user.user_bp)
     app.register_blueprint(api.resources.dict.dict_bp)
+    app.register_blueprint(api.resources.dict_item.dict_item_bp)
 {%- if cookiecutter.use_celery == "yes" %}
 
 

@@ -115,7 +115,7 @@ class {{title_lower | to_pascal_case }}Resource(Resource):
         schema = {{title_lower | to_pascal_case }}Schema(unknown=True, partial=True)
         # {{title_lower}} = {{title_lower | to_pascal_case }}.query.get(id)
         {{title_lower}} = schema.load(request.json)
-        {{title_lower}}.updated_by = current_user.id
+        {{title_lower}}.update_by = current_user.id
         session.merge({{title_lower}})
         session.flush()
         return return_code.SUCCESS.d, 200
@@ -123,7 +123,7 @@ class {{title_lower | to_pascal_case }}Resource(Resource):
     def post(self, id):
         schema = {{title_lower | to_pascal_case }}Schema(unknown=True)
         {{title_lower}} = schema.load(request.json)
-        {{title_lower}}.updated_by = current_user.id
+        {{title_lower}}.update_by = current_user.id
         db.session.add({{title_lower}})
         db.session.flush()
 
@@ -199,7 +199,7 @@ class {{title_lower | to_pascal_case }}List(Resource):
         schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
         {{title_lower}}s = schema.load(request.json)
         for {{title_lower}} in {{title_lower}}s:
-            {{title_lower}}.updated_by = current_user.id
+            {{title_lower}}.update_by = current_user.id
             {{title_lower}}.org_code = current_user.org_code
         db.session.add_all({{title_lower}}s)
         db.session.flush()
@@ -207,11 +207,11 @@ class {{title_lower | to_pascal_case }}List(Resource):
         return return_code.SUCCESS.d, 200
 
 
-@{{title_lower}}_bp.route('/{{title_lower}}s/list', methods=['POST'])
+@{{title_lower}}_bp.route('/{{title_lower}}s/list', methods=['GET'])
 @jwt_required
 def query_list():
     schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
-    req = request.json
+    req = request.args
     {% for col in columns%}
     {{col.name }} = req.get('{{col.name | to_camel_case}}'){% endfor %}
     sort = req.get("sort", None)
@@ -227,7 +227,7 @@ def query_list():
 
 
 {%- if cookiecutter.use_excel == "yes" %}
-@{{title_lower}}_bp.route('/{{title_lower}}s/export', methods=['POST'])
+@{{title_lower}}_bp.route('/{{title_lower}}s/export', methods=['GET'])
 @jwt_required
 def export_excel():
     query_sets = {{title_lower | to_pascal_case }}.query.all()
@@ -245,8 +245,8 @@ def import_excel():
         column_names = [{%for col in columns%}'{{col.name }}', {%endfor %}]
         records = request.get_records(field_name='file', name_columns_by_row=-1, start_row=1, auto_detect_int=False, colnames=column_names)
         db_util.increment_update(session=session,
-                                 data_dict_list=records,
                                  schema_type={{title_lower | to_pascal_case }}Schema,
+                                 data_dict_list=records,
                                  is_src=False,
                                  request_id=current_user.id)
         session.flush()

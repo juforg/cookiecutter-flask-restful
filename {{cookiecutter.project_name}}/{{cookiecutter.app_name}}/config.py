@@ -29,7 +29,10 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     'pool_use_lifo': False,   # 越老的越容易被回收，一定要跟ping 配合，否则老的极易被回收造成连接不可用
     'poolclass': QueuePool,  # flask 应用可以设QueuePool，celery应用可能不用池
     'isolation_level': 'AUTOCOMMIT',
-    'connect_args': {'ssl': {'ca': None}}  #开启ssl连接的数据库配置
+    'connect_args': {
+                    'ssl': {'ca': None}, #开启ssl连接的数据库配置
+                     # "init_command": "SET SESSION time_zone='+08:00'" # 设置时区防止数据库时区不对
+                     }
 }
 
 # ------------------------------------------------JWT START-----------------

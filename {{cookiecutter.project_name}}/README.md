@@ -177,6 +177,29 @@ SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;
 set session transaction isolation level read committed; 
 select @@global.tx_isolation,@@tx_isolation;
 ```
+ - 数据时区问题
+```python
+SQLALCHEMY_ENGINE_OPTIONS = {
+'connect_args': {
+    "init_command": "SET SESSION time_zone='+08:00'"
+    }
+}
+```
+ - SSL连接配置
+ ```python
+SQLALCHEMY_ENGINE_OPTIONS = {
+'connect_args': {
+    'ssl': {'ca': None},
+    }
+}
+```
+ - marshmallow 验证数字问题
+ ```python
+trafic_flow_no = fields.String(
+        validate=[validate.Regexp(r'\d',error="[{input}]不是一个整数")],
+)
+```
+ 
 
 [python编码规范](https://internal.cardopt.com/confluence/pages/viewpage.action?pageId=6979785)
 5. pandas的DataFrame 数去数据库,利用sqlalchemy选择数据源

@@ -85,7 +85,10 @@ class DbUtil:
 
 def full_insert(session, schema_type, data_dict_list, model_type, request_id: str, is_src: bool, **kwargs):
     start = time.time()
-    count = session.query(model_type).filter_by(**kwargs).delete()
+    query = session.query(model_type).filter_by(**kwargs)
+    if hasattr(model_type, "request_id"):
+        query = query.filter_by(request_id == request_id)
+    count = query.delete()
     logger.info("数据[%s]全量删除,request_id:[%s],kwargs:[%s]完成, 删除:%s,[performance-DD]耗时:[%s]", model_type.__tablename__, request_id, kwargs.__str__(), count, time.time() - start)
     return batch_insert(session, schema_type, data_dict_list, model_type, request_id, is_src)
 
