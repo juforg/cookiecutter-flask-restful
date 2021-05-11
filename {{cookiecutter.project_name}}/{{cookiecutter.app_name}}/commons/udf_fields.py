@@ -7,6 +7,7 @@
 # @date: 2019/10/03
 import decimal
 import math
+import typing
 
 from marshmallow.fields import Integer, Float, Decimal
 import numbers
@@ -22,6 +23,12 @@ class UdfInt(Integer):
                 return super()._validated(value)
             raise self.make_error("invalid", input=value)
         return super()._validated(value)
+    def _format_num(self, value) -> typing.Any:
+        """Return the number value for value, given this field's `num_type`."""
+        if value:
+            return self.num_type(value)
+        else:
+            return None
 
 class UdfFloat(Float):
     def _validated(self, value):
