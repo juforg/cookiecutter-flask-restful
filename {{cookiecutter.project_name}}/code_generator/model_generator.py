@@ -34,7 +34,7 @@ schema_path = os.path.join(os.path.dirname(__file__), "../..", '{{cookiecutter.a
 if not os.path.exists(schema_path): os.makedirs(schema_path)
 tmp_path = os.path.join(os.path.dirname(__file__), "../..", 'tmp', 'api')
 if not os.path.exists(tmp_path): os.makedirs(tmp_path)
-tb_prefix = ['{{cookiecutter.app_name}}_', 'ti_', 'tu_', 'ts_', 'tt_', 'tl_', 'tm_']
+tb_prefix = ['{{cookiecutter.app_name}}_', 'ti_', 'tu_', 'ts_', 'tt_', 'tl_', 'tm_', 'ta_']
 jinjia_env = Environment(
     loader=PackageLoader('{{cookiecutter.app_name}}', 'templates'),
     autoescape=True)
@@ -53,6 +53,7 @@ def start():
         choose_selected1 = pick(choose_options1, choose_title1, multi_select=True, min_selection_count=1)
         choose_selected1 = list(map(lambda x: x[0], choose_selected1)) if choose_selected1 else None
         all_table = [{"tb_name": table_obj.name, "tb_obj": table_obj} for table_obj in db.get_tables_for_bind()]
+        all_table.sort(key=lambda x: x.get('tb_name'))
         geterate_all_title = '请选择是否生成所有表:'
         geterate_all_options = [False, True]
         geterate_all_selected, geterate_all_idx = pick(geterate_all_options, geterate_all_title, multi_select=False, min_selection_count=1)
@@ -66,8 +67,11 @@ def start():
                 geterate_tbs = list(map(lambda x: x[0], tb_selected_list_tuple))
             else:
                 geterate_tbs = []
+        use_tb_prefix_title = '请选择是否去掉表前缀:'
+        use_tb_prefix_options = [False, True]
+        use_tb_prefix_selected, use_tb_prefix_idx = pick(use_tb_prefix_options, use_tb_prefix_title, multi_select=False, min_selection_count=1)
         for tb in geterate_tbs:
-            var_dict = init_env_variable(tb.get('tb_name'), tb.get('tb_obj'))
+            var_dict = init_env_variable(tb.get('tb_name'), tb.get('tb_obj'), use_tb_prefix_selected)
             if 'model' in choose_selected1:
                 generate_model(var_dict.get('tb_with_prefix_name'), var_dict.get('tb_name'), tb.get('tb_obj'), db_url)
             if 'api' in choose_selected1:
@@ -93,12 +97,12 @@ def remove_prefix(tb_name):
     return tb_name
 
 
-def init_env_variable(tb_name: str, tb_obj):
+def init_env_variable(tb_name: str, tb_obj, if_remove_tb_prefix=True):
     var_dict = dict()
     var_dict['tb_prefix'] = tb_prefix
     var_dict['tb_with_prefix_name'] = tb_name
-    var_dict['tb_name'] = remove_prefix(tb_name)
-    var_dict['title_lower'] = remove_prefix(tb_name).lower()
+    var_dict['tb_name'] = remove_prefix(tb_name) if if_remove_tb_prefix else tb_name
+    var_dict['title_lower'] = (remove_prefix(tb_name) if if_remove_tb_prefix else tb_name).lower()
     var_dict['tb_obj'] = tb_obj
     var_dict['columns'] = var_dict.get('tb_obj').columns
     var_dict['model_path'] = model_path

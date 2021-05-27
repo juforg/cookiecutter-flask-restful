@@ -233,6 +233,8 @@ def export_excel():
     query_sets = {{title_lower | to_pascal_case }}.query.all()
     column_names = [{%for col in columns%}'{{col.name }}', {%endfor %}]
     colnames = [{%for col in columns%}'{{col.comment }}', {%endfor %}]
+    logger.info(f'export length :{len(query_sets)}')
+    query_sets = query_sets if len(query_sets) > 0 else [{{title_lower | to_pascal_case }}()]
     return excel.make_response_from_query_sets(query_sets, column_names, file_type="xlsx",
                                                file_name='{{tb_obj.comment or tb_obj.info}}', sheet_name='{{tb_obj.comment or tb_obj.info}}', colnames=colnames)
 

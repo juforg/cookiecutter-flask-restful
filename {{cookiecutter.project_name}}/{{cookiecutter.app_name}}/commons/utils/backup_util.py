@@ -34,5 +34,5 @@ class DumpData(Thread):
                 path = os.path.join(os.getenv("DATA_PATH", "/var/{{cookiecutter.app_name}}/data/"), self.dir_key)
                 if not os.path.exists(path):
                     os.makedirs(path)
-                data_df.to_csv(os.path.join(path, key + ".csv"))
+                data_df.to_csv(os.path.join(path, key + ".csv.gz"))
             logger.info("--备份数据:%s, 耗时: %s", self.dir_key, time.time() - start)
