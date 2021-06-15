@@ -51,11 +51,10 @@ RUN apt-get update && \
 
 ADD requirements.txt /requirements.txt
 RUN pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple \
-    && pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple \
     {%- if cookiecutter.use_LightGBM == "yes" %}
     && pip install pystan -i https://mirrors.aliyun.com/pypi/simple \
     {%- endif %}
-    && pip install gunicorn -i https://mirrors.aliyun.com/pypi/simple
+    && pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple
 
 # clean
 RUN apt-get clean -y && \

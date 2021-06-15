@@ -74,9 +74,14 @@ CELERY = {
     # "task_reject_on_worker_lost": False,  # 可能会导致任务跑多次
     # "worker_redirect_stdouts_level": 'DEBUG',
     "task_track_started": True,  # 是任务有开始状态
+    'event_queue_prefix': '{{cookiecutter.app_name}}:celeryev',
     "broker_transport_options": {
         'max_connections': 30,
-        'health_check_interval': 20
+        'health_check_interval': 20,
+        'queue_name_prefix': '{{cookiecutter.app_name}}:', # only for SQS  & AZURE SERVICE
+        'unacked_mutex_key': '{{cookiecutter.app_name}}:unacked_mutex',
+        'unacked_index_key': '{{cookiecutter.app_name}}:unacked_index',
+        'unacked_key': '{{cookiecutter.app_name}}:unacked',
     },
     "result_backend_transport_options": {
         'visibility_timeout': 60 * 30,
