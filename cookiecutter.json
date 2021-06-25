@@ -1,6 +1,6 @@
 {
     "project_name": "restful_api",
-    "app_name": "myapi",
+    "app_name": "{{ cookiecutter.project_name.lower().replace(' ', '-') |replace('-', '_')|replace('.', '_')|trim() }}",
     "python_version": ["3.7"],
     "tox_python_env": "py{{ cookiecutter.python_version|replace('.','') }}",
     "use_celery": ["no", "yes"],
