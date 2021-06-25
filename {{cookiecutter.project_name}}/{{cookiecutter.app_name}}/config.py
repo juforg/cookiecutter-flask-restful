@@ -99,14 +99,3 @@ REDIS_URL = os.getenv('REDIS_URL')
 LOG_PATH = os.getenv("LOG_PATH")
 LOG_LEVEL = os.getenv("LOG_LEVEL")
 DATA_PATH = os.getenv("DATA_PATH")
-
-fields.Field.default_error_messages["required"] = "必填项没值"
-fields.Field.default_error_messages["null"] = "字段不可以为null"
-fields.Field.default_error_messages["validator_failed"] = "值无效"
-fields.Integer.default_error_messages = {"invalid": "不是一个有效的整数"}
-validate.Length.message_min = "字段长度不允许小于最小长度 {min}"
-validate.Length.message_max = "字段长度不允许超过最大长度{max}"
-validate.Length.message_all = "字段长度必须大于 {min} 小于 {max}"
-validate.Length.message_equal = "字段长度必须为 {equal}"
-validate.Range.message_min = "必须 {min_op} {min}."
-validate.Range.message_gte = "大于等于"

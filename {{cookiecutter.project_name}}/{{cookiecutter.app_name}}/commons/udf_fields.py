@@ -11,6 +11,8 @@ import typing
 
 from marshmallow.fields import Integer, Float, Decimal
 import numbers
+from {{cookiecutter.app_name}}.commons.utils import str_util
+
 
 class UdfInt(Integer):
     def _validated(self, value):
@@ -23,12 +25,16 @@ class UdfInt(Integer):
                 return super()._validated(value)
             raise self.make_error("invalid", input=value)
         return super()._validated(value)
+
     def _format_num(self, value) -> typing.Any:
         """Return the number value for value, given this field's `num_type`."""
+        if type(value) == str and not str_util.is_number(value):
+            raise self.make_error("invalid", input=value)
         if value:
             return self.num_type(value)
         else:
             return None
+
 
 class UdfFloat(Float):
     def _validated(self, value):
@@ -39,6 +45,7 @@ class UdfFloat(Float):
             if math.isnan(num) or num == float("inf") or num == float("-inf"):
                 raise self.make_error("special")
         return num
+
 
 class UdfDecimal(Decimal):
     def _validated(self, value):

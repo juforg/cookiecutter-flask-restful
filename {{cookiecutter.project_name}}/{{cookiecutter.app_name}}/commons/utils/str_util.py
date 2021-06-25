@@ -21,6 +21,7 @@ def is_number(str_number: str):
     else:
         return False
 
+
 def is_int(str_number: str):
     """
     判断字符串是否是整数 如果是正数 判断是否为数字 如果是负数 判断除掉负号的部分是否是数字
@@ -28,6 +29,7 @@ def is_int(str_number: str):
     :return:
     """
     return str_number.lstrip('-').isdigit()
+
 
 def is_float(str_number: str):
     """

@@ -235,7 +235,6 @@ class DictItemList(Resource):
         dict_items = schema.load(request.json)
         for dict_item in dict_items:
             dict_item.updated_by = current_user.id
-            dict_item.org_code = current_user.org_code
         db.session.add_all(dict_items)
         db.session.flush()
 

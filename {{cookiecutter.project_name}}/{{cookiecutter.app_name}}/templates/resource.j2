@@ -103,7 +103,7 @@ class {{title_lower | to_pascal_case }}Resource(Resource):
 
     def get(self, id):
         schema = {{title_lower | to_pascal_case }}Schema(unknown=True,)
-        {{title_lower}} = {{title_lower | to_pascal_case }}.query.get(id)
+        {{title_lower}} = {{title_lower | to_pascal_case }}.query.filter({{title_lower | to_pascal_case }}.id == id).first()
         if {{title_lower}}:
             ret = schema.dump({{title_lower}}.__dict__)
             return return_code.SUCCESS.set_data(ret).d, 200
@@ -123,6 +123,7 @@ class {{title_lower | to_pascal_case }}Resource(Resource):
     def post(self, id):
         schema = {{title_lower | to_pascal_case }}Schema(unknown=True)
         {{title_lower}} = schema.load(request.json)
+        {{title_lower}}.create_by = current_user.id
         {{title_lower}}.update_by = current_user.id
         db.session.add({{title_lower}})
         db.session.flush()
@@ -130,7 +131,7 @@ class {{title_lower | to_pascal_case }}Resource(Resource):
         return return_code.SUCCESS.d, 200
 
     def delete(self, id):
-        {{title_lower}} = {{title_lower | to_pascal_case }}.query.get(id)
+        {{title_lower}} = {{title_lower | to_pascal_case }}.query.filter({{title_lower | to_pascal_case }}.id == id).first()
         if {{title_lower}}:
             db.session.delete({{title_lower}})
             db.session.flush()
@@ -200,7 +201,6 @@ class {{title_lower | to_pascal_case }}List(Resource):
         {{title_lower}}s = schema.load(request.json)
         for {{title_lower}} in {{title_lower}}s:
             {{title_lower}}.update_by = current_user.id
-            {{title_lower}}.org_code = current_user.org_code
         db.session.add_all({{title_lower}}s)
         db.session.flush()
 
@@ -230,11 +230,22 @@ def query_list():
 @{{title_lower}}_bp.route('/{{title_lower}}s/export', methods=['GET'])
 @jwt_required
 def export_excel():
-    query_sets = {{title_lower | to_pascal_case }}.query.all()
+    req = request.args
+    {% for col in columns%}
+    {{col.name }} = req.get('{{col.name | to_camel_case}}'){% endfor %}
+    sort = req.get("sort", None)
+    query = {{title_lower | to_pascal_case }}.query. \
+        with_entities({% for col in columns%}{{title_lower | to_pascal_case }}.{{col.name |lower}}, {% endfor %})
+    {% for col in columns%}
+    if {{col.name}}:
+        query = query.filter({{title_lower | to_pascal_case }}.{{col.name |lower}} == {{col.name}}){% endfor %}
+    if sort:
+        query = query.order_by(text(sort))
+    query_sets = query.all()
     column_names = [{%for col in columns%}'{{col.name }}', {%endfor %}]
     colnames = [{%for col in columns%}'{{col.comment }}', {%endfor %}]
     logger.info(f'export length :{len(query_sets)}')
-    query_sets = query_sets if len(query_sets) > 0 else [{{title_lower | to_pascal_case }}()]
+    query_sets = query_sets if len(query_sets) > 0 and len(query_sets) > 0 else [{{title_lower | to_pascal_case }}()]
     return excel.make_response_from_query_sets(query_sets, column_names, file_type="xlsx",
                                                file_name='{{tb_obj.comment or tb_obj.info}}', sheet_name='{{tb_obj.comment or tb_obj.info}}', colnames=colnames)
 
@@ -246,11 +257,20 @@ def import_excel():
     try:
         column_names = [{%for col in columns%}'{{col.name }}', {%endfor %}]
         records = request.get_records(field_name='file', name_columns_by_row=-1, start_row=1, auto_detect_int=False, colnames=column_names)
-        db_util.increment_update(session=session,
-                                 schema_type={{title_lower | to_pascal_case }}Schema,
-                                 data_dict_list=records,
-                                 is_src=False,
-                                 request_id=current_user.id)
+        {{title_lower}}_schema = {{title_lower | to_pascal_case }}Schema(unknown=True, many=True)
+        {{title_lower}}_val_result = {{title_lower}}_schema.validate({{title_lower}}_schema.dump(records))
+        if {{title_lower}}_val_result:
+            return return_code.FILE_VALIDATE_ERROR.set_data({'errorInfo': {{title_lower}}_val_result}).d, 200
+        else:
+            #todo 将excel上传的数据中中文根据字典转为code
+            #dict_map = common_fun.get_revert_dict_map('DICT_NAME')
+            for r in records:
+                r['create_by'] = current_user.id
+            db_util.increment_update(session=session,
+                                     schema_type={{title_lower | to_pascal_case }}Schema,
+                                     data_dict_list=records,
+                                     is_src=False,
+                                     request_id=current_user.id)
         session.flush()
     except BaseException as e:
         logger.exception(e)

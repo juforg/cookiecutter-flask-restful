@@ -229,7 +229,6 @@ class DictList(Resource):
         dicts = schema.load(request.json)
         for dict in dicts:
             dict.updated_by = current_user.id
-            dict.org_code = current_user.org_code
         db.session.add_all(dicts)
         db.session.flush()
 

@@ -1,7 +1,7 @@
 """Script that runs after the project generation phase."""
 import re
 import sys
-
+print('INFO: pre-hook ...')
 MODULE_REGEX = r"^[_a-zA-Z][_a-zA-Z0-9]+$"
 
 MODULE_NAME = "{{ cookiecutter.app_name }}"
