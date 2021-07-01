@@ -13,3 +13,4 @@ pyecharts
 flask-sqlacodegen
 tox
 pipenv
+faker

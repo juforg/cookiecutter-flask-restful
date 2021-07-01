@@ -15,15 +15,16 @@ from celery import Celery
 {%- if cookiecutter.use_redis == "yes" %}
 from flask_redis import FlaskRedis
 {%- endif %}
-
-from {{cookiecutter.app_name}}.commons.apispec import APISpecExt
+{%- if cookiecutter.use_apispec == "yes"%}
+from {{cookiecutter.app_name}}.commons.apispec import APISpecExt {% endif%}
 
 
 db = SQLAlchemy(session_options={'autocommit': True})
 jwt = JWTManager()
 ma = Marshmallow()
 migrate = Migrate()
-apispec = APISpecExt()
+{%- if cookiecutter.use_apispec == "yes"%}
+apispec = APISpecExt() {% endif%}
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 {%- if cookiecutter.use_celery == "yes" %}
 celery = Celery()

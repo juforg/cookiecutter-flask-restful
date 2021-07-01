@@ -3,6 +3,7 @@ import sys
 import shutil
 
 use_celery = '{{cookiecutter.use_celery}}'
+use_apispec = '{{cookiecutter.use_apispec}}'
 
 
 if use_celery == "no":
@@ -30,4 +31,19 @@ if use_celery == "no":
         os.remove(os.path.join(base_path, "tests", "test_celery.py"))
     except Exception:
         print("ERROR: cannot delete celery tests files")
+        sys.exit(1)
+
+if use_apispec == "no":
+    base_path = os.getcwd()
+    apispec_file_path = os.path.join(
+        base_path,
+        '{{cookiecutter.app_name}}',
+        'commons',
+        'apispec.py'
+    )
+
+    try:
+        os.remove(apispec_file_path)
+    except Exception:
+        print("ERROR: cannot delete path %s" % apispec_file_path)
         sys.exit(1)

@@ -15,7 +15,8 @@ marshmallow-sqlalchemy==0.23.0
 marshmallow==3.6.0
 python-dotenv
 passlib
-apispec[yaml]
+apispec
+pyyaml
 apispec-webframeworks
 pymysql==0.9.3
 cryptography
@@ -25,6 +26,7 @@ aiohttp==3.6.2
 {%- if cookiecutter.use_celery == "yes" %}
 celery[redis,msgpack]<5
 kombu<5
+flower
 {%- endif %}
 {%- if cookiecutter.wsgi_server == "uwsgi" %}
 uwsgi
@@ -47,4 +49,3 @@ scikit-learn==0.21.3
 mip==1.9.0
 PuLP==2.0
 {%- endif %}
-flower

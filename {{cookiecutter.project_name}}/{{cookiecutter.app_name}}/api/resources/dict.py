@@ -22,7 +22,8 @@ from {{cookiecutter.app_name}}.models.dict import Dict
 from {{cookiecutter.app_name}}.api.schemas.dict import DictSchema
 from {{cookiecutter.app_name}}.extensions import db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
-import flask_excel as excel
+{%- if cookiecutter.use_excel == "yes" %}
+import flask_excel as excel {% endif%}
 
 logger = logging.getLogger(__name__)
 
@@ -284,6 +285,7 @@ def query_list():
     return return_code.SUCCESS.set_data(data).d, 200
 
 
+{ % - if cookiecutter.use_excel == "yes" %}
 @dict_bp.route('/dicts/export', methods=['POST'])
 @jwt_required
 def export_excel():
@@ -291,7 +293,7 @@ def export_excel():
     column_names = ['id', 'dict_name', 'dict_code', 'dict_desc', 'is_valid', 'org_code', 'create_by', 'create_time', 'update_by', 'update_time', 'revision', ]
     colnames = ['主键', '字典名称', '字典编码', '字典描述', '是否有效 Y启用 N不启用', '机构代码', '创建人', '创建时间', '更新人', '更新时间', '版本号', ]
     return excel.make_response_from_query_sets(query_sets, column_names, file_type="xlsx",
-                                               file_name='字典', sheet_name='字典', colnames=colnames)
+                                               file_name='字典', sheet_name='字典', colnames=colnames) {% endif%}
 
 
 @dict_bp.route('/dicts/import', methods=['POST'])

@@ -9,7 +9,8 @@ from flask_jwt_extended import (
 )
 
 from {{cookiecutter.app_name}}.models import User
-from {{cookiecutter.app_name}}.extensions import pwd_context, jwt, apispec
+from {{cookiecutter.app_name}}.extensions import pwd_context, jwt \
+    {%- if cookiecutter.use_apispec == "yes"%}, apispec {% endif%}
 from {{cookiecutter.app_name}}.auth.helpers import revoke_token, is_token_revoked, add_token_to_database
 from {{cookiecutter.app_name}}.commons.constants import return_code
 import logging
@@ -200,9 +201,11 @@ def expired_token_callback():
 def invalid_token_callback(error):  # we have to keep the argument here, since it's passed in by the caller internally
     return return_code.INVALID_TOKEN.set_data(error).d, 200
 
+{%- if cookiecutter.use_apispec == "yes"%}
 @blueprint.before_app_first_request
 def register_views():
     apispec.spec.path(view=login, app=app)
     apispec.spec.path(view=refresh, app=app)
     apispec.spec.path(view=revoke_access_token, app=app)
     apispec.spec.path(view=revoke_refresh_token, app=app)
+ {% endif%}

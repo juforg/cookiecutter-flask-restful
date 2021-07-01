@@ -42,6 +42,8 @@ jinjia_env.filters['to_camel_case'] = to_camel_case
 jinjia_env.filters['to_pascal_case'] = to_pascal_case
 jinjia_env.filters['dbtype_transfer'] = dbtype_transfer
 jinjia_env.filters['factoryboy_gen'] = factoryboy_gen
+jinjia_env.variable_start_string = "[["
+jinjia_env.variable_end_string = "]]"
 
 
 def start():

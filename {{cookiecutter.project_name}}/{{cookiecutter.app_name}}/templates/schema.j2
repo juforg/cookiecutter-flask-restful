@@ -10,23 +10,23 @@
 #    2. SOLID原则： S: 单一职责 O: 开闭原则 L: 迪米特法则 I: 接口隔离原则 D: 依赖倒置原则
 #
 from marshmallow import fields, validate
-from {{cookiecutter.app_name}}.models.{{title_lower }} import {{title_lower | to_pascal_case }}
-from {{cookiecutter.app_name}}.extensions import ma, db
+from [[cookiecutter.app_name]].models.[[title_lower ]] import [[title_lower | to_pascal_case ]]
+from [[cookiecutter.app_name]].extensions import ma, db
 
 
-class {{title_lower | to_pascal_case }}Schema(ma.SQLAlchemySchema):
+class [[title_lower | to_pascal_case ]]Schema(ma.SQLAlchemySchema):
 {%for col in columns%}
-    {{col.name }} = fields.{{col.type.__class__.__name__ | dbtype_transfer}}(
-        required={{False if col.nullable == True or col.autoincrement else True }},
-        allow_none={{False if col.nullable == False else True }},
-        {%if col.type not in str_types or (col.type.__class__.__name__.upper() in str_types and col.nullable == True) %}# {%endif %}validate=[validate.Length(min=1, error='{{col.comment or col.info}}不合法)],
+    [[col.name ]] = fields.[[col.type.__class__.__name__ | dbtype_transfer]](
+        required=[[False if col.nullable == True or col.autoincrement else True ]],
+        allow_none=[[False if col.nullable == False else True ]],
+        {%if col.type not in str_types or (col.type.__class__.__name__.upper() in str_types and col.nullable == True) %}# {%endif %}validate=[validate.Length(min=1, error='[[col.comment or col.info]]不合法)],
         {%if col.type in datetime_types%}format='%Y-%m-%d %H:%M:%S', {%endif %}
         {%if col.type in date_types%}format='%Y-%m-%d', {%endif %}
-        error_messages={'required': '{{col.name | to_camel_case }}{{col.comment or col.info}}不能为空', 'invalid': '{{col.comment or col.info}}不合法'},
-        data_key='{{col.name  | to_camel_case}}')
+        error_messages={'required': '[[col.name | to_camel_case ]][[col.comment or col.info]]不能为空', 'invalid': '[[col.comment or col.info]]不合法'},
+        data_key='[[col.name  | to_camel_case]]')
 {%endfor %}
     class Meta:
-        model = {{title_lower | to_pascal_case }}
+        model = [[title_lower | to_pascal_case ]]
         load_instance = True
         sqla_session = db.session
 

@@ -2,7 +2,8 @@ from flask import Flask, request, session
 import logging, logging.config, yaml, os, time
 from {{cookiecutter.app_name}} import api
 from {{cookiecutter.app_name}} import auth
-from {{cookiecutter.app_name}}.extensions import apispec
+{%- if cookiecutter.use_apispec == "yes"%}
+from {{cookiecutter.app_name}}.extensions import apispec {% endif%}
 from {{cookiecutter.app_name}}.extensions import db
 from {{cookiecutter.app_name}}.extensions import jwt
 from {{cookiecutter.app_name}}.extensions import migrate
@@ -22,7 +23,8 @@ def create_app(testing=False):
         app.config["TESTING"] = True
 
     configure_extensions(app)
-    configure_apispec(app)
+    { % - if cookiecutter.use_apispec == "yes" %}
+    configure_apispec(app) {% endif%}
     register_blueprints(app)
     init_around_request(app)
 {%- if cookiecutter.use_celery == "yes" %}
@@ -83,7 +85,8 @@ def register_blueprints(app):
     """
     app.register_blueprint(auth.views.blueprint)
     app.register_blueprint(api.error_handler.err_bp)
-    app.register_blueprint(api.views.blueprint)
+    app.register_blueprint(api.test.blueprint)
+    app.register_blueprint(api.views.api_bp)
     app.register_blueprint(api.resources.user.user_bp)
     app.register_blueprint(api.resources.dict.dict_bp)
     app.register_blueprint(api.resources.dict_item.dict_item_bp)
